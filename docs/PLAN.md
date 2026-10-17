@@ -13,10 +13,10 @@ your prompt, and as the thing you check before you commit.
 The most important design decision in Part B is the **edit model**: how state is stored and how every
 change goes through undo/redo. Get this right first; everything else sits on top of it.
 
-- [ ] **Editor store** (`src/store/`): Zustand store holding `items: PlacedItem[]`, `selectedId`, `locale`,
+- [x] **Editor store** (`src/store/`): Zustand store holding `items: PlacedItem[]`, `selectedId`, `locale`,
       `activeTool` (which palette item is armed, if any).
       *Done when:* the store has no React or three.js imports in its logic and the types compile.
-- [ ] **Commands and history** (`src/commands/`): every edit is a command (`add`, `move`, `rotate`,
+- [x] **Commands and history** (`src/commands/`): every edit is a command (`add`, `move`, `rotate`,
       `delete`) with `apply` and `revert`. Two stacks: `past` and `future`. A new edit clears `future`.
       *Done when:* unit tests prove add → undo → redo returns the exact same state, for each command.
 - [ ] **Footprint-aware snapping** (`src/domain/grid.ts`): snap an item so its footprint edges sit on grid

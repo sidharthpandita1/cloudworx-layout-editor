@@ -1,10 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ITEM_TYPES } from './domain/catalog'
-import { translate, type Locale, type MessageKey } from './i18n'
+import { translate, type MessageKey } from './i18n'
 import { EditorCanvas } from './scene/EditorCanvas'
+import { useEditorStore } from './store/editorStore'
 
 export default function App() {
-  const [locale, setLocale] = useState<Locale>('en')
+  const locale = useEditorStore((state) => state.locale)
+  const setLocale = useEditorStore((state) => state.setLocale)
   const t = (key: MessageKey) => translate(locale, key)
 
   // Screen readers and CSS line-breaking rules depend on the document language.

@@ -11,7 +11,7 @@ Part A design document.
 │ scene/   React Three Fiber: floor, items, selection, drag   │
 ├─────────────────────────────────────────────────────────────┤
 │ store/   Zustand store: items, selection, history, locale   │
-│ commands/ add · move · rotate · delete  (apply / revert)    │
+│ commands/ add · delete · move · rotate · batch (plain data) │
 ├─────────────────────────────────────────────────────────────┤
 │ domain/  pure TypeScript: types, catalog, grid & snapping   │
 │ rules/   pure TypeScript: clearance check                   │
@@ -29,8 +29,8 @@ and makes it easy to explain in the review.
  user action (click, drag, key, list row, properties field)
         │
         ▼
- dispatch(command) ──► command.apply(state) ──► new items[]  ──► push onto history.past
-        │                                                         clear history.future
+ execute(command) ──► applyCommand(items, command) ──► new items[] ──► push onto past (max 200)
+        │                                                              clear future
         ▼
  store updates ──► derived values recomputed from items[]:
                      • violations = checkClearance(items)
@@ -45,12 +45,18 @@ and makes it easy to explain in the review.
 
 1. **One source of truth.** `items` and `selectedId` live in the store. The 3D view and the panels are
    both views of it; neither owns selection.
-2. **Every edit is a command.** Nothing changes `items` directly. Undo = `revert` the last command;
-   redo = `apply` it again. A drag is one command, created on pointer-up with the start and end positions.
+2. **Every edit is a command, and commands are plain data.** Nothing changes `items` directly.
+   `applyCommand(items, command)` returns new items; `invertCommand(command)` returns its opposite.
+   Undo = apply the inverse of the last command; redo = apply the command again. Because commands are
+   data, the same objects could be sent to a server or proposed by an assistant as JSON. A drag is one
+   command, created on pointer-up with the start and end positions. Several edits that belong together
+   (an assistant fix, a multi-select move) are one `batch` command, so one undo reverts them all.
 3. **Derived, not stored.** Violations and the bill of materials are computed from `items`, so they can
    never go stale and undo/redo needs no special handling for them.
-4. **Selection is not in history.** Undo reverts edits to the layout, not clicks. (See ASSUMPTIONS.md.)
-5. **Rendering is instanced.** One `InstancedMesh` per item type, so draw calls stay flat as items grow.
+4. **Selection is not in history.** Undo reverts edits to the layout, not clicks. If an undo removes the
+   selected item, the selection is cleared. (See ASSUMPTIONS.md.)
+5. **History is capped** at 200 edits (`HISTORY_LIMIT`); the oldest are dropped.
+6. **Rendering is instanced.** One `InstancedMesh` per item type, so draw calls stay flat as items grow.
 
 ## Folder guide
 

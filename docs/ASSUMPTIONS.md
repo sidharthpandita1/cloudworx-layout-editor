@@ -27,9 +27,14 @@ brief left open. Copy the final list into the README.
 
 10. Selection changes are not part of undo history; only edits to the layout are.
 11. A drag is one undoable step, regardless of how many cells it passes through.
-12. Undo history is kept in memory for the session only (no persistence).
+12. Undo history is kept in memory for the session only (no persistence), capped at the last 200 edits.
+    Older edits can no longer be undone (normal behaviour in tools like Figma and VS Code). In the real
+    product the server keeps the long-term record of every saved command.
+13. A newly placed item becomes the selected item.
+14. Items are named by type and a per-type number ("Cabinet 3"). Numbers are never reused after a delete,
+    so a message naming two items is never ambiguous. The type name is translated; the number is not.
 
 ## Measurement
 
-13. FPS is measured on a production build (`npm run build && npm run preview`), at 1080p browser window,
+15. FPS is measured on a production build (`npm run build && npm run preview`), at 1080p browser window,
     with the `?stats` counter, after the scene settles.

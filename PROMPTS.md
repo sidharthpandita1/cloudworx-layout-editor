@@ -37,6 +37,34 @@ floor grid; typed EN/VI dictionaries; docs (`PLAN`, `ARCHITECTURE`, `DECISIONS`,
 
 ## 1. Edit model (store, commands, undo/redo)
 
+**Prompt 4**
+> Let's start Day 1 with the store and undo/redo.
+
+*Result:* A design proposal before any code: commands as plain data (`add`, `delete`, `move`,
+`rotate`, `batch`) with `applyCommand` and `invertCommand`; a Zustand store with `past`/`future` stacks;
+selection not undoable; labels built when the command is created so redo is exact.
+*Why I accepted data commands over `do()/undo()` methods:* they can be serialised, so the same commands
+can go to a server or come from the AI assistant as JSON (matches the Part A design).
+
+**Prompt 5**
+> Will the history have any size limit?
+
+*Result:* Analysis: memory isn't the real issue (a move is ~100 bytes), but unbounded growth in an
+all-day session is still a smell, and batch commands can be large. Recommended a cap of 200 edits, a
+batch counting as one.
+*My decision:* Cap at 200 (`HISTORY_LIMIT`), recorded as an assumption.
+
+**Prompt 6**
+> Let's go with this approach for now; I will review later.
+
+*Result:* `src/commands/commands.ts`, `src/store/editorStore.ts` and 28 passing unit tests (round trip
+for every command, batch undo order, redo cleared by new edits, history cap, selection cleared on undo,
+delete-undo restores list position). The AI changed one detail from the design: items store a
+per-type `number` instead of an English label, so names translate ("Tủ điện 3").
+*My review:* Reviewed the code and tests; approved without changes.
+
+---
+
 _Template for each entry:_
 
 **Prompt N**

@@ -12,7 +12,8 @@ be able to explain and change every line, so favour simple, readable code over c
 ## Architecture (see docs/ARCHITECTURE.md)
 
 - `src/domain`, `src/rules`, `src/i18n`: pure TypeScript, no React or three.js imports.
-- `src/commands`: every layout edit is a command with `apply` and `revert`. Never mutate items directly.
+- `src/commands`: every layout edit is a plain-data command applied with `applyCommand` and undone with
+  `invertCommand`. Never mutate items directly; go through the store's `execute`.
 - `src/store`: Zustand store is the single source of truth for items, selection, history and locale.
 - `src/scene` (R3F) and `src/ui` (panels) read from the store and dispatch commands.
 - Violations and the bill of materials are derived from items, never stored.

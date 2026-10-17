@@ -15,11 +15,19 @@ export interface ItemType {
   color: string
 }
 
+/** A point on the floor, in metres. */
+export interface Position {
+  x: number
+  z: number
+}
+
 /** One item placed on the floor. Positions are the footprint centre, in metres. */
 export interface PlacedItem {
   id: string
   typeId: ItemTypeId
-  label: string // human-readable name used in messages, e.g. "Cabinet 3"
+  // Per-type sequence number, shown as "<translated type name> <number>", e.g. "Cabinet 3".
+  // Never reused after a delete, so messages that name items stay unambiguous.
+  number: number
   x: number
   z: number
   rotation: QuarterTurns
