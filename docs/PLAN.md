@@ -27,7 +27,7 @@ change goes through undo/redo. Get this right first; everything else sits on top
 - [x] **Render items**: one coloured box per item, sized from the catalog.
       *Done when:* 20 placed items all show with the right size and colour.
 - [x] **Select**: click an item in 3D to select it; show a clear highlight (outline or colour).
-- [ ] Log today's key prompts in `PROMPTS.md`.
+- [x] Log today's key prompts in `PROMPTS.md`. (Logged for every phase since; see PROMPTS.md sections 0–9.)
 
 ## Day 2 — Full editing, panels, rule, BOM, performance
 
@@ -74,6 +74,8 @@ Priority order. Stop when time runs out; a solid editor beats half-finished extr
        via `postMessage`; the editor checks `event.origin` against an allowlist and replies `ready`.
 
 - [ ] Finish `README.md`: run steps, features, FPS with hardware, assumptions, AI usage.
+      *So far:* run steps, features, FPS with hardware, model optimisation and credits are done.
+      *Left:* copy the final assumptions list in, and write the AI usage section.
 
 ## Day 4 — Part A design document
 
