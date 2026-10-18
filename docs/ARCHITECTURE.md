@@ -56,16 +56,20 @@ and makes it easy to explain in the review.
 4. **Selection is not in history.** Undo reverts edits to the layout, not clicks. If an undo removes the
    selected item, the selection is cleared. (See ASSUMPTIONS.md.)
 5. **History is capped** at 200 edits (`HISTORY_LIMIT`); the oldest are dropped.
-6. **Rendering is instanced.** One `InstancedMesh` per item type, so draw calls stay flat as items grow.
+6. **Every item in the store is on the grid and inside the floor.** The store's edit helpers snap and
+   clamp with `snapItemPosition` / `rotatedPosition` (`src/domain/footprint.ts`), so no caller (drag,
+   properties panel, keyboard, assistant) can put an item off-grid. The drag preview uses the same
+   function, so what you see is where it lands. A rotation that also shifts the item is one `batch`.
+7. **Rendering is instanced.** One `InstancedMesh` per item type, so draw calls stay flat as items grow.
 
 ## Folder guide
 
 | Folder | Contains | Imports allowed |
 |---|---|---|
-| `src/domain` | types, catalog, grid maths | nothing app-specific |
+| `src/domain` | types, catalog, grid maths, footprints and snapping, `groupItemsByType` | nothing app-specific |
 | `src/rules` | clearance rule | `domain` |
 | `src/i18n` | `en.ts`, `vi.ts`, `translate()` | nothing |
 | `src/commands` | command definitions | `domain` |
 | `src/store` | Zustand store, history | `domain`, `commands`, `rules`, `i18n` |
-| `src/scene` | R3F components | `store`, `domain` |
-| `src/ui` | panels | `store`, `domain`, `i18n` |
+| `src/scene` | R3F: `Floor` (placing + preview), `ItemInstances`, `SelectionOutline`, `PlacementPreview` | `store`, `domain` |
+| `src/ui` | panels (`Palette`, `Toolbar`), `shortcuts` (pure key mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |

@@ -29,9 +29,9 @@ Add `?stats` to the URL to show the FPS counter.
 ## Features
 
 - [x] 20 m × 12 m floor with 0.5 m cells
-- [ ] Palette of three item types (cabinet, drive, transformer)
-- [ ] Place with grid snapping; select, move, rotate, delete
-- [ ] Undo and redo for every edit
+- [x] Palette of three item types (cabinet, drive, transformer)
+- [x] Place with grid snapping; select, move (drag), rotate, delete
+- [x] Undo and redo for every edit (toolbar and keyboard)
 - [ ] Placed-items list and properties panel, selection synced with the 3D view
 - [ ] Clearance rule: items closer than 0.6 m are highlighted with a message naming both
 - [ ] Bill of materials with English / Vietnamese toggle
@@ -44,9 +44,21 @@ _TODO_: frame rate with 500 items placed.
 |---|---|---|---|---|
 | 500 | | | | |
 
+## Using the editor
+
+- **Place:** click an item in the palette, then click the floor (the tool stays armed; Esc stops).
+- **Select and move:** press on an item and drag; it snaps to the 0.5 m grid. Click empty space to deselect.
+- **Camera:** drag empty space to orbit, scroll to zoom, right-drag to pan.
+
 ## Keyboard shortcuts
 
-_TODO_
+| Action | Windows | Mac |
+|---|---|---|
+| Undo | Ctrl+Z | ⌘Z |
+| Redo | Ctrl+Shift+Z or Ctrl+Y | ⌘⇧Z |
+| Rotate selected 90° | R | R |
+| Delete selected | Delete or Backspace | Delete |
+| Cancel drag / stop placing / deselect | Esc | Esc |
 
 ## Assumptions
 

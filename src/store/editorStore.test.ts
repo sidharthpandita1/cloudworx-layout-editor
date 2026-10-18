@@ -28,22 +28,22 @@ describe('placeItem', () => {
 
 describe('undo and redo', () => {
   it('undo reverts each edit in order, redo re-applies it', () => {
-    const { placeItem } = store.getState()
-    placeItem('cabinet', { x: 0, z: 0 })
-    store.getState().moveItem('cabinet-1', { x: 2, z: 1 })
-    store.getState().rotateItem('cabinet-1')
+    // A 1×1 drive sits mid-cell and does not shift when rotated, which keeps the numbers simple.
+    store.getState().placeItem('drive', { x: 0.25, z: 0.25 })
+    store.getState().moveItem('drive-1', { x: 2.25, z: 1.25 })
+    store.getState().rotateItem('drive-1')
 
     store.getState().undo()
-    expect(store.getState().items[0]).toMatchObject({ x: 2, z: 1, rotation: 0 })
+    expect(store.getState().items[0]).toMatchObject({ x: 2.25, z: 1.25, rotation: 0 })
     store.getState().undo()
-    expect(store.getState().items[0]).toMatchObject({ x: 0, z: 0 })
+    expect(store.getState().items[0]).toMatchObject({ x: 0.25, z: 0.25 })
     store.getState().undo()
     expect(store.getState().items).toEqual([])
 
     store.getState().redo()
     store.getState().redo()
     store.getState().redo()
-    expect(store.getState().items[0]).toMatchObject({ x: 2, z: 1, rotation: 1 })
+    expect(store.getState().items[0]).toMatchObject({ x: 2.25, z: 1.25, rotation: 1 })
   })
 
   it('a new edit clears the redo stack', () => {
@@ -78,21 +78,52 @@ describe('undo and redo', () => {
 
   it(`keeps at most ${HISTORY_LIMIT} edits, dropping the oldest`, () => {
     store.getState().placeItem('cabinet', { x: 0, z: 0 })
+    // Alternate between x = 1 and x = 2 so every move is real and stays inside the floor.
     for (let step = 1; step <= HISTORY_LIMIT + 4; step++) {
-      store.getState().moveItem('cabinet-1', { x: step, z: 0 })
+      store.getState().moveItem('cabinet-1', { x: step % 2 === 0 ? 2 : 1, z: 0 })
     }
     expect(store.getState().past).toHaveLength(HISTORY_LIMIT)
 
-    // 205 edits were made (1 add + 204 moves); only the last 200 moves can be undone.
+    // 205 edits were made (1 add + 204 moves); only the last 200 moves can be undone,
+    // so undoing everything stops at the position after move 4 (x = 2), not at the start (x = 0).
     for (let i = 0; i < HISTORY_LIMIT + 10; i++) store.getState().undo()
-    expect(store.getState().items[0].x).toBe(4)
+    expect(store.getState().items[0].x).toBe(2)
+  })
+})
+
+describe('snapping in the store', () => {
+  it('placeItem snaps to the grid and clamps inside the floor', () => {
+    store.getState().placeItem('cabinet', { x: 50, z: -50 })
+    expect(store.getState().items[0]).toMatchObject({ x: 9.5, z: -5.75 })
+  })
+
+  it('moveItem snaps an off-grid position', () => {
+    store.getState().placeItem('drive', { x: 0, z: 0 })
+    store.getState().moveItem('drive-1', { x: 1.1, z: -0.4 })
+    expect(store.getState().items[0]).toMatchObject({ x: 1.25, z: -0.25 })
+  })
+
+  it('rotating a 2×1 cabinet shifts it half a cell, and one undo restores both', () => {
+    store.getState().placeItem('cabinet', { x: 1, z: -0.25 })
+    store.getState().rotateItem('cabinet-1')
+    expect(store.getState().items[0]).toMatchObject({ x: 1.25, z: 0, rotation: 1 })
+    expect(store.getState().past).toHaveLength(2) // add + one batch
+
+    store.getState().undo()
+    expect(store.getState().items[0]).toMatchObject({ x: 1, z: -0.25, rotation: 0 })
+  })
+
+  it('rotating a cabinet four times returns it exactly to the start', () => {
+    store.getState().placeItem('cabinet', { x: 1, z: -0.25 })
+    for (let i = 0; i < 4; i++) store.getState().rotateItem('cabinet-1')
+    expect(store.getState().items[0]).toMatchObject({ x: 1, z: -0.25, rotation: 0 })
   })
 })
 
 describe('edit helpers', () => {
-  it('moving to the same position records nothing', () => {
+  it('moving to the same snapped position records nothing', () => {
     store.getState().placeItem('cabinet', { x: 1, z: 1 })
-    store.getState().moveItem('cabinet-1', { x: 1, z: 1 })
+    store.getState().moveItem('cabinet-1', { x: 1, z: 1 }) // snaps to the cell it is already in
     expect(store.getState().past).toHaveLength(1)
   })
 
@@ -120,5 +151,65 @@ describe('edit helpers', () => {
     store.getState().rotateItem('missing')
     store.getState().deleteItem('missing')
     expect(store.getState().past).toEqual([])
+  })
+})
+
+describe('dragging', () => {
+  beforeEach(() => {
+    store.getState().placeItem('drive', { x: 0.25, z: 0.25 })
+  })
+
+  it('startDrag begins at the item position', () => {
+    store.getState().startDrag('drive-1')
+    expect(store.getState().drag).toEqual({ id: 'drive-1', position: { x: 0.25, z: 0.25 } })
+  })
+
+  it('updateDrag snaps and clamps the live position, and records no history', () => {
+    store.getState().startDrag('drive-1')
+    store.getState().updateDrag({ x: 3.1, z: -0.4 })
+    expect(store.getState().drag?.position).toEqual({ x: 3.25, z: -0.25 })
+    store.getState().updateDrag({ x: 99, z: 0 })
+    expect(store.getState().drag?.position).toEqual({ x: 9.75, z: 0.25 })
+    expect(store.getState().past).toHaveLength(1) // only the add
+    expect(store.getState().items[0]).toMatchObject({ x: 0.25, z: 0.25 }) // the layout is unchanged
+  })
+
+  it('endDrag records the whole drag as one move, and one undo puts it back', () => {
+    store.getState().startDrag('drive-1')
+    store.getState().updateDrag({ x: 1.1, z: 0.1 })
+    store.getState().updateDrag({ x: 2.1, z: 1.1 })
+    store.getState().updateDrag({ x: 4.1, z: 2.1 })
+    store.getState().endDrag()
+
+    expect(store.getState().drag).toBeNull()
+    expect(store.getState().items[0]).toMatchObject({ x: 4.25, z: 2.25 })
+    expect(store.getState().past).toHaveLength(2) // add + one move
+
+    store.getState().undo()
+    expect(store.getState().items[0]).toMatchObject({ x: 0.25, z: 0.25 })
+  })
+
+  it('a drag that ends where it started records nothing', () => {
+    store.getState().startDrag('drive-1')
+    store.getState().updateDrag({ x: 3, z: 3 })
+    store.getState().updateDrag({ x: 0.3, z: 0.3 })
+    store.getState().endDrag()
+    expect(store.getState().past).toHaveLength(1)
+  })
+
+  it('cancelDrag puts the item back and records nothing', () => {
+    store.getState().startDrag('drive-1')
+    store.getState().updateDrag({ x: 5, z: 5 })
+    store.getState().cancelDrag()
+    store.getState().endDrag() // the pointer is released after Esc: must do nothing
+    expect(store.getState().drag).toBeNull()
+    expect(store.getState().items[0]).toMatchObject({ x: 0.25, z: 0.25 })
+    expect(store.getState().past).toHaveLength(1)
+  })
+
+  it('updateDrag without a drag, and startDrag with an unknown id, do nothing', () => {
+    store.getState().updateDrag({ x: 5, z: 5 })
+    store.getState().startDrag('missing')
+    expect(store.getState().drag).toBeNull()
   })
 })

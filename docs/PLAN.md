@@ -19,22 +19,22 @@ change goes through undo/redo. Get this right first; everything else sits on top
 - [x] **Commands and history** (`src/commands/`): every edit is a command (`add`, `move`, `rotate`,
       `delete`) with `apply` and `revert`. Two stacks: `past` and `future`. A new edit clears `future`.
       *Done when:* unit tests prove add → undo → redo returns the exact same state, for each command.
-- [ ] **Footprint-aware snapping** (`src/domain/grid.ts`): snap an item so its footprint edges sit on grid
+- [x] **Footprint-aware snapping** (`src/domain/grid.ts`): snap an item so its footprint edges sit on grid
       lines, taking rotation into account (a 2×1 cabinet rotated 90° becomes 1×2), and clamp it inside the
       floor. *Done when:* unit tests cover odd/even footprints, rotation and the floor edges.
-- [ ] **Place from palette**: click a palette item, then click the floor to place it.
+- [x] **Place from palette**: click a palette item, then click the floor to place it.
       *Done when:* items land snapped, never outside the floor, and Ctrl+Z removes them.
-- [ ] **Render items**: one coloured box per item, sized from the catalog.
+- [x] **Render items**: one coloured box per item, sized from the catalog.
       *Done when:* 20 placed items all show with the right size and colour.
-- [ ] **Select**: click an item in 3D to select it; show a clear highlight (outline or colour).
+- [x] **Select**: click an item in 3D to select it; show a clear highlight (outline or colour).
 - [ ] Log today's key prompts in `PROMPTS.md`.
 
 ## Day 2 — Full editing, panels, rule, BOM, performance
 
-- [ ] **Move by dragging** on the floor plane, snapped. One drag = one undo step (commit on pointer-up,
+- [x] **Move by dragging** on the floor plane, snapped. One drag = one undo step (commit on pointer-up,
       not every frame). *Done when:* drag then one Ctrl+Z puts the item back where it started.
-- [ ] **Rotate** (R key / button, 90° steps) and **delete** (Delete key / button). Both undoable.
-- [ ] **Undo/redo shortcuts**: Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z, plus toolbar buttons that disable when empty.
+- [x] **Rotate** (R key / button, 90° steps) and **delete** (Delete key / button). Both undoable.
+- [x] **Undo/redo shortcuts**: Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z, plus toolbar buttons that disable when empty.
 - [ ] **Placed-items list** (left panel): click a row to select; selecting in 3D highlights and scrolls to
       the row. *Done when:* selection stays in sync both ways.
 - [ ] **Properties panel** (right): type, label, x, z, rotation for the selected item. Editing x/z here is
@@ -46,7 +46,7 @@ change goes through undo/redo. Get this right first; everything else sits on top
 - [ ] **Bill of materials**: table counted from the scene (derived, never stored), labels translated.
 - [ ] **EN/VI toggle** covers every visible string, including violation messages and number formats
       (`Intl.NumberFormat`).
-- [ ] **Instanced rendering**: switch to one `InstancedMesh` per item type, so 500 items cost ~3 draw calls
+- [x] **Instanced rendering** (done early, in the placing phase): switch to one `InstancedMesh` per item type, so 500 items cost ~3 draw calls
       instead of 500. Keep per-instance colour for selection and violation highlights.
 - [ ] **500-item stress test**: a dev-only button or `?seed=500` to fill the floor. Measure FPS on a
       production build (`npm run build && npm run preview`, open with `?stats`). Write the numbers down.

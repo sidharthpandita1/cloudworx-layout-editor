@@ -1,13 +1,17 @@
 import { useEffect } from 'react'
-import { ITEM_TYPES } from './domain/catalog'
-import { translate, type MessageKey } from './i18n'
 import { EditorCanvas } from './scene/EditorCanvas'
 import { useEditorStore } from './store/editorStore'
+import { Palette } from './ui/Palette'
+import { Toolbar } from './ui/Toolbar'
+import { useKeyboardShortcuts } from './ui/useKeyboardShortcuts'
+import { useTranslate } from './ui/useTranslate'
 
 export default function App() {
   const locale = useEditorStore((state) => state.locale)
   const setLocale = useEditorStore((state) => state.setLocale)
-  const t = (key: MessageKey) => translate(locale, key)
+  const isPlacing = useEditorStore((state) => state.activeTool !== null)
+  const t = useTranslate()
+  useKeyboardShortcuts()
 
   // Screen readers and CSS line-breaking rules depend on the document language.
   useEffect(() => {
@@ -18,6 +22,7 @@ export default function App() {
     <div className="app">
       <header className="app-header">
         <h1>{t('app.title')}</h1>
+        <Toolbar />
         <button type="button" onClick={() => setLocale(locale === 'en' ? 'vi' : 'en')}>
           {t('app.switchLanguage')}
         </button>
@@ -26,14 +31,7 @@ export default function App() {
       <aside className="panel">
         <section>
           <h2>{t('panel.palette')}</h2>
-          <ul className="palette">
-            {ITEM_TYPES.map((type) => (
-              <li key={type.id}>
-                <span className="swatch" style={{ background: type.color }} aria-hidden />
-                {t(type.nameKey)}
-              </li>
-            ))}
-          </ul>
+          <Palette />
         </section>
         <section>
           <h2>{t('panel.items')}</h2>
@@ -41,7 +39,7 @@ export default function App() {
         </section>
       </aside>
 
-      <main className="viewport">
+      <main className={isPlacing ? 'viewport placing' : 'viewport'}>
         <EditorCanvas />
       </main>
 
