@@ -4,6 +4,7 @@ import { useEditorStore } from '../store/editorStore'
 import { urlOptions } from '../urlOptions'
 import { Floor } from './Floor'
 import { Items } from './ItemInstances'
+import { ProposalPreview } from './ProposalPreview'
 import { RenderInfo } from './RenderInfo'
 import { SelectionOutline } from './SelectionOutline'
 
@@ -28,6 +29,7 @@ export function EditorCanvas() {
       <Floor />
       <Items />
       <SelectionOutline />
+      <ProposalPreview />
       <OrbitControls makeDefault maxPolarAngle={Math.PI / 2.2} />
       {showStats && <Stats className="stats" />}
       {showStats && <RenderInfo />}

@@ -91,6 +91,25 @@ brief left open. Copy the final list into the README.
 25. The shortcuts dialog opens by itself once per browser (first visit), and never with `?seed` or `?stats`.
     If the browser blocks storage, it opens on every visit instead.
 
+## Assistant
+
+26. The assistant is a mock that runs in the browser (the brief asks for a mock). It understands three
+    requests: fix one clearance problem, fix all, and summarise. Typed text is matched by keywords in
+    English or Vietnamese; anything else gets a short "what I can do" reply.
+27. "Fix" means moving items only, never rotating or deleting them. A moved item keeps its rotation and
+    ends up at least 0.6 m from everything. "Fix one" fixes the selected item's problem if it has one,
+    otherwise the first problem in the list.
+28. "Fix all" proposes at most 10 moves and looks at no more than 30 problems, so a proposal stays easy to
+    check and a reply stays fast. It may leave some problems; the reply says so.
+29. Only one proposal is open at a time; asking again replaces it. The conversation is kept for the
+    session only, and replies stay in the language they were written in after a language switch.
+30. The chat can cover part of the 3D view while it is open; closing it keeps the conversation and any
+    waiting proposal (the ghosts stay visible).
+31. A proposal is applied only to the exact layout it was planned on. Any edit (including undo) in
+    between makes it out of date.
+32. Hiding a side panel is a view preference per browser, not part of the layout or of undo history.
+
+
 ## Measurement
 
 15. FPS is measured on a production build (`npm run build && npm run preview`) with `?seed=500&stats`,

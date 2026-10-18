@@ -19,13 +19,30 @@ body {
 }
 
 .app {
+  --left-width: 260px;
+  --right-width: 300px;
   display: grid;
-  grid-template-columns: 260px 1fr 300px;
+  grid-template-columns: var(--left-width) minmax(0, 1fr) var(--right-width);
+  transition: grid-template-columns 0.22s ease-out;
   grid-template-rows: auto 1fr;
   grid-template-areas:
     'header header header'
     'left viewport right';
   height: 100vh;
+}
+
+.app.left-closed {
+  --left-width: 40px;
+}
+
+.app.right-closed {
+  --right-width: 40px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app {
+    transition: none;
+  }
 }
 
 .app-header {
@@ -55,6 +72,7 @@ body {
 }
 
 .panel {
+  position: relative; /* for the open/close button in its top corner */
   overflow-y: auto;
   padding: 12px 16px;
   background: var(--panel);
@@ -68,6 +86,32 @@ body {
 .panel:last-of-type {
   grid-area: right;
   border-left: 1px solid var(--border);
+}
+
+/* Top-right corner, level with the first heading. Leaves room so a heading never runs under it. */
+.panel .panel-toggle {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  margin: 0;
+}
+
+.panel:not(.collapsed) section:first-child h2 {
+  padding-right: 28px;
+}
+
+/* Closed: a thin strip holding only the button, centred. */
+.panel.collapsed {
+  overflow: hidden;
+  padding: 0;
+}
+
+.panel.collapsed .panel-toggle {
+  right: 4px;
+}
+
+.panel .panel-toggle:focus-visible {
+  outline-offset: -2px; /* drawn inside, so the narrow strip doesn't clip it */
 }
 
 .panel h2 {
@@ -296,14 +340,14 @@ select:focus-visible {
    !important because the FPS meter sets its own inline position. */
 .stats {
   top: auto !important;
-  right: 300px !important;
+  right: auto !important;
   bottom: 22px !important;
-  left: auto !important;
+  left: 260px !important;
 }
 
 .render-info {
   position: fixed;
-  right: 300px;
+  left: 260px;
   bottom: 0;
   z-index: 10000;
   padding: 2px 6px;
@@ -600,4 +644,283 @@ button.primary {
   border-color: var(--accent);
   background: var(--accent);
   color: white;
+}
+
+/*
+ * Assistant: a round bubble in the bottom-right corner of the 3D view, and the chat window above it.
+ * The chat is always in the page; closed, it is hidden (visibility) and inert, so it can animate out.
+ * Same timing as the shortcuts dialog: ease-out 0.22 s opening, ease-in 0.15 s closing.
+ */
+.assistant-dock {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  pointer-events: none; /* only the bubble and the open chat take clicks; the 3D view gets the rest */
+}
+
+.assistant-bubble {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  color: white;
+  font-size: 1.35rem;
+  box-shadow: 0 6px 18px rgb(47 111 222 / 0.35);
+  pointer-events: auto;
+  transition: transform 0.15s ease-out;
+}
+
+.assistant-bubble:hover {
+  transform: scale(1.06);
+}
+
+.assistant-bubble:focus-visible {
+  outline: 3px solid #9dbcf2;
+  outline-offset: 3px;
+}
+
+.bubble-dot {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #e07a1f;
+}
+
+.assistant-chat {
+  display: flex;
+  flex-direction: column;
+  width: min(380px, calc(100vw - 32px));
+  height: min(560px, calc(100vh - 160px));
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--panel);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.2);
+  overflow: hidden;
+  transform-origin: bottom right;
+  opacity: 0;
+  transform: translateY(12px) scale(0.96);
+  visibility: hidden;
+  transition:
+    opacity 0.15s ease-in,
+    transform 0.15s ease-in,
+    visibility 0s linear 0.15s; /* hide only after the fade */
+}
+
+.assistant-chat.open {
+  opacity: 1;
+  transform: none;
+  visibility: visible;
+  pointer-events: auto;
+  transition:
+    opacity 0.22s ease-out,
+    transform 0.22s ease-out,
+    visibility 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant-chat,
+  .assistant-chat.open,
+  .assistant-bubble {
+    transition: none;
+  }
+}
+
+.assistant-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.assistant-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.badge {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #e8effc;
+  color: var(--accent);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.assistant-log {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.assistant-log:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+.bubble {
+  max-width: 92%;
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+}
+
+.bubble p {
+  margin: 0;
+}
+
+.bubble p + p {
+  margin-top: 6px;
+}
+
+.from-assistant {
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  background: var(--bg);
+}
+
+.from-user {
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  background: var(--accent);
+  color: white;
+}
+
+.thinking {
+  color: var(--muted);
+  animation: thinking 1.2s ease-in-out infinite;
+}
+
+@keyframes thinking {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking {
+    animation: none;
+  }
+}
+
+.proposal {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #b9cdf3;
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.proposal h3 {
+  margin: 0 0 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.proposal ul {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.8125rem;
+}
+
+/* Name on one line, "x …, z … → x …, z …" under it, never broken in the middle. */
+.proposal-item {
+  display: block;
+  font-weight: 500;
+}
+
+.proposal-coords {
+  display: block;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.proposal-problems {
+  margin: 6px 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.proposal-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.proposal-status {
+  margin: 8px 0 0;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.assistant-compose {
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--border);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+}
+
+.chip:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.assistant-form {
+  display: flex;
+  gap: 8px;
+}
+
+.assistant-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.875rem;
+}
+
+.assistant-form input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
 }

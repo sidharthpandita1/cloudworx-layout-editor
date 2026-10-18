@@ -67,7 +67,7 @@ Priority order. Stop when time runs out; a solid editor beats half-finished extr
        chosen over Draco after measuring both. LOD and simpler glass are listed as next steps.
 2. [x] **Keyboard editing**: Tab into the canvas or list, arrow keys move by one cell, Delete removes,
        and an `aria-live` region announces "Cabinet 2 moved to x 3.5, z −1.0".
-3. [ ] **Assistant preview (mock)**: a panel that streams a canned reply token by token, proposes a move
+3. [x] **Assistant preview (mock)**: a panel that streams a canned reply token by token, proposes a move
        that fixes a violation, shows it as a translucent ghost, Accept applies it as **one command**
        (so one undo reverts it), Reject discards it.
 4. [ ] **Embedded mode**: `host.html` loads the editor in an iframe and sends `{ projectId, user, token }`

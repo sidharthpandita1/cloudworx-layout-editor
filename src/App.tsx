@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { translate } from './i18n'
 import { EditorCanvas } from './scene/EditorCanvas'
 import { Announcer } from './ui/Announcer'
+import { AssistantLauncher } from './ui/AssistantPanel'
 import { BomTable } from './ui/BomTable'
 import { ClearancePanel } from './ui/ClearancePanel'
 import { useEditorStore } from './store/editorStore'
@@ -10,8 +11,10 @@ import { NoticeToast } from './ui/NoticeToast'
 import { Palette } from './ui/Palette'
 import { PropertiesPanel } from './ui/PropertiesPanel'
 import { ShortcutsButton, ShortcutsDialog } from './ui/ShortcutsDialog'
+import { SidePanel } from './ui/SidePanel'
 import { Toolbar } from './ui/Toolbar'
 import { useKeyboardShortcuts } from './ui/useKeyboardShortcuts'
+import { usePanelOpen } from './ui/usePanelOpen'
 import { useTranslate } from './ui/useTranslate'
 
 export default function App() {
@@ -19,6 +22,8 @@ export default function App() {
   const setLocale = useEditorStore((state) => state.setLocale)
   const isPlacing = useEditorStore((state) => state.activeTool !== null)
   const t = useTranslate()
+  const [leftOpen, toggleLeft] = usePanelOpen('left')
+  const [rightOpen, toggleRight] = usePanelOpen('right')
   useKeyboardShortcuts()
 
   // Screen readers and CSS line-breaking rules depend on the document language; the tab title follows it too.
@@ -28,7 +33,8 @@ export default function App() {
   }, [locale])
 
   return (
-    <div className="app">
+    // Closed side panels shrink to a thin strip; the grid columns animate and the 3D view takes the space.
+    <div className={['app', leftOpen ? '' : 'left-closed', rightOpen ? '' : 'right-closed'].join(' ').trim()}>
       <header className="app-header">
         <h1>{t('app.title')}</h1>
         <Toolbar />
@@ -41,7 +47,7 @@ export default function App() {
       </header>
       <ShortcutsDialog />
 
-      <aside className="panel">
+      <SidePanel side="left" open={leftOpen} onToggle={toggleLeft}>
         <section>
           <h2>{t('panel.palette')}</h2>
           <Palette />
@@ -50,7 +56,7 @@ export default function App() {
           <h2 id="items-heading">{t('panel.items')}</h2>
           <ItemList labelledBy="items-heading" />
         </section>
-      </aside>
+      </SidePanel>
 
       <main className={isPlacing ? 'viewport placing' : 'viewport'}>
         {/* One Tab stop for the 3D view. Clicking the canvas also focuses it, so the arrow keys
@@ -69,10 +75,11 @@ export default function App() {
           {t('canvas.help')}
         </p>
         <NoticeToast />
+        <AssistantLauncher />
         <Announcer />
       </main>
 
-      <aside className="panel">
+      <SidePanel side="right" open={rightOpen} onToggle={toggleRight}>
         <section>
           <h2>{t('panel.clearance')}</h2>
           <ClearancePanel />
@@ -85,7 +92,7 @@ export default function App() {
           <h2>{t('panel.bom')}</h2>
           <BomTable />
         </section>
-      </aside>
+      </SidePanel>
     </div>
   )
 }

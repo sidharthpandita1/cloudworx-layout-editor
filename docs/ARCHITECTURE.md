@@ -41,6 +41,16 @@ and makes it easy to explain in the review.
  (so the 3D view, the list and the properties panel can never disagree)
 ```
 
+The assistant joins the same flow at the end, as one more source of commands:
+
+```
+ question ──► assistant(request, signal) ──► text pieces … ──► proposal = { command, before, after }
+                                                                   │
+              ghost in 3D = movesIn(command)  ◄────────────────────┤  (hidden once items[] changes)
+                                                                   ▼
+                                                  Accept ──► execute(command)   (one undo step)
+```
+
 ## Key rules
 
 1. **One source of truth.** `items` and `selectedId` live in the store. The 3D view and the panels are
@@ -72,8 +82,9 @@ and makes it easy to explain in the review.
 | `src/rules` | clearance rule `findViolations` (+ benchmark) | `domain` |
 | `src/i18n` | `en.ts`, `vi.ts`, `translate()` with `{placeholders}`, number/label/message formatting, screen-reader sentences (`announce.ts`) | `domain`, `rules` (types and constants only) |
 | `src/commands` | command definitions | `domain` |
+| `src/assistant` | `fix.ts` (pure: nearest clear spot, fix one / fix all as move commands), `mockAssistant.ts` (the `Assistant` contract, intent matching, reply planning, word-by-word stream), `assistantStore.ts` (conversation, proposals, accept/reject) | `domain`, `rules`, `commands`, `i18n`; the store also reads and calls `store` (`execute`) |
 | `src/store` | Zustand store, history, `loadLayout`, cached `selectViolations` | `domain`, `commands`, `rules`, `i18n` |
-| `src/scene` | R3F: `Floor` (placing + preview), `ItemInstances`, `SelectionOutline`, `PlacementPreview`, `RenderInfo` (draw calls, `?stats`) | `store`, `domain` |
+| `src/scene` | R3F: `Floor` (placing + preview), `ItemInstances`, `SelectionOutline`, `PlacementPreview`, `ProposalPreview` (assistant ghosts and arrows), `RenderInfo` (draw calls, `?stats`) | `store`, `domain` |
 | `src/bench` | model optimisation benchmark page (`model-bench.html`): raw vs optimised, 1 or 500 copies, instancing on/off | three.js, drei; nothing from the editor |
 | `scripts` | `model-fetch.mjs`, `model-optimise.mjs` (the glTF pipeline, see docs/OPTIMISATION.md) | Node only |
-| `src/ui` | panels (`Palette`, `Toolbar`, `ItemList`, `PropertiesPanel`, `ClearancePanel`, `BomTable`, `NoticeToast`, `Announcer`, `ShortcutsDialog`), `shortcuts` (pure key and arrow mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |
+| `src/ui` | panels (`Palette`, `Toolbar`, `ItemList`, `PropertiesPanel`, `ClearancePanel`, `BomTable`, `NoticeToast`, `Announcer`, `ShortcutsDialog`, `AssistantPanel` (bubble + chat), `SidePanel` + `usePanelOpen` (collapsible columns)), `shortcuts` (pure key and arrow mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |

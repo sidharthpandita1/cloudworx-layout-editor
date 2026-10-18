@@ -384,6 +384,54 @@ visible; Tab order title → ✕ → list → "Got it", and focus stays in the d
 124 tests pass, typecheck, lint and build clean.
 *My review:* _TODO_
 
+**Prompt 30**
+> Push it and let's move to the assistant preview.
+
+*Result:* Design before code: a mock behind a real-looking streaming contract
+(`Assistant = (request, signal) => AsyncIterable<ReplyEvent>`), a pure fix search, the proposal as a
+normal command (so Accept is one undo step), the preview derived with `applyCommand`, and stale
+proposals refused. Four questions. My answers: drawer beside the 3D view; fix one or all; suggestion
+chips plus free text; ghost plus arrow.
+Built `src/assistant/` (`fix.ts`, `mockAssistant.ts`, `assistantStore.ts`, with tests),
+`ui/AssistantPanel.tsx`, `scene/ProposalPreview.tsx`, EN/VI strings and styles. The first "fix all"
+took 23 s on the packed 500-item layout (most items there have nowhere to go, and each search is
+~1.5 ms); remembering items with no spot and capping at 30 tries brought it to ~0.1 s. 152 tests pass.
+*Verified in Chrome (`?seed=24`):* the reply streams (`aria-busy` while streaming), "Fix one" 37 → 36
+problems, Accept applies it and one Cmd+Z puts it back; "Fix all" proposes 10 moves (37 → 14) with
+blue ghosts and dashed arrows; deleting an item marks the proposal out of date and removes Accept;
+typed "tóm tắt" gives the Vietnamese summary; no console errors.
+*My review:* _TODO_
+
+**Prompt 31**
+> Now we have to change some parts of the UI, as it looks very cluttered right now. (Screenshot of the
+> drawer.) Right now the assistant takes the whole space on the right. I want it to just sit as a
+> bubble at the bottom, and when the user clicks it, the whole chat should appear.
+
+*Result:* The drawer column and the header button are gone. A round ✨ bubble sits in the bottom-right
+corner of the 3D view; clicking it opens a 380 × 560 px chat window above it (non-modal, so the 3D
+view still works). ✕, Esc or the bubble (now ✕) close it, and focus goes back to the bubble. Same
+ease-out / ease-in animation as the shortcuts dialog. The chat stays mounted but hidden and inert
+while closed, so the conversation and a waiting proposal survive; an orange dot on the bubble (with
+screen-reader text) says a suggestion is waiting. The "demo" note moved into the greeting. The
+`?stats` overlays moved to the bottom-left so they don't sit under the bubble.
+*Verified in Chrome:* the 3D view is 880 px wide with the chat open or closed (it narrowed before);
+the input gets focus on open; Esc closes it and focuses the bubble; the dot shows while a proposal
+waits and goes after Accept (37 → 14 problems); no console errors.
+*My review:* _TODO_
+
+**Prompt 32**
+> One more thing: the panel should have a button so that the user can close and open it as needed.
+
+*Result:* One question (which panel). My answer: both side panels. Each side panel got a chevron
+button in its top corner (`SidePanel`, `usePanelOpen`). Closed, the column shrinks to a 40 px strip
+that keeps only the button; the grid columns animate (ease-out 0.22 s, off for reduce motion) and the
+3D view takes the space. The contents are `hidden` while closed. The choice is remembered in
+`localStorage`. EN/VI labels such as "Hide palette and placed items".
+*Verified in Chrome (1440 px wide):* 3D view 880 px → 1,100 px (left closed) → 1,360 px (both closed),
+and the canvas re-renders at the new size; Enter on the focused button works and focus stays on it;
+the closed state survives a reload; Vietnamese labels; no console errors.
+*My review:* _TODO_
+
 ---
 
 _Template for each entry:_

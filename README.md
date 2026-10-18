@@ -45,6 +45,11 @@ For example: `npm run build && npm run preview`, then open http://localhost:4173
 - [x] Keyboard editing: select from the list with ↑/↓, move with the arrow keys, rotate, delete and undo
   without a mouse; every edit and selection is announced to screen readers (English and Vietnamese)
 - [x] Bill of materials (item, size, quantity, total) with English / Vietnamese toggle
+- [x] Both side panels can be hidden (chevron button in their top corner) to give the 3D view more room;
+  the choice is remembered in the browser
+- [x] Assistant preview (mock): a chat bubble that streams a reply and proposes moves that fix clearance
+  problems, shown as blue ghosts with arrows in the 3D view; Accept applies them as one undo step,
+  Reject discards them
 
 ## Performance
 
@@ -108,6 +113,15 @@ Without `model:fetch`, the raw version is loaded from the Khronos repository.
 - **Overlaps:** items can't be put on top of each other. While placing, the ghost turns red over an
   occupied spot; dragging stops at the last free cell; a red message says which item is in the way.
 - **Camera:** drag empty space to orbit, scroll to zoom, right-drag to pan.
+- **More room:** the chevron in the top corner of each side panel hides it (a thin strip with the same
+  button stays to bring it back). The 3D view grows to fill the space.
+- **Assistant:** click the round **✨** bubble in the bottom-right corner of the 3D view (✕ or Esc
+  closes it; an orange dot means a suggestion is waiting). Use a suggestion (fix one clearance problem, fix
+  all, summarise) or type a question. The reply streams in (Stop cancels it); a proposed change shows as
+  blue ghosts with dashed arrows in the 3D view and a "Clearance problems: before → after" line. Accept
+  applies it as one step (one Undo reverts it all); Reject changes nothing. If you edit the layout
+  first, the proposal is marked out of date instead of being applied to a layout it wasn't planned for.
+  The assistant is a mock that runs in the browser: it understands only these few requests.
 
 ## Keyboard shortcuts
 

@@ -44,6 +44,11 @@ export function violatingIds(violations: Violation[]): Set<string> {
   return ids
 }
 
+/** True when two footprints are closer than MIN_CLEARANCE (or overlap). */
+export function rectsTooClose(a: Rect, b: Rect): boolean {
+  return checkPair(a, b) !== null
+}
+
 function checkPair(a: Rect, b: Rect): { gap: number; overlap: boolean } | null {
   // Gap along each axis. Negative means the two rectangles overlap along that axis.
   const dx = Math.max(b.minX - a.maxX, a.minX - b.maxX)
