@@ -23,6 +23,7 @@ npm run lint       # oxlint
 npm run build      # production build into dist/
 npm run preview    # serve the production build
 npm run bench      # speed of the clearance rule at 500 items
+npm run model:fetch / model:optimise / model:variants   # 3D model optimisation (see below)
 ```
 
 Options in the address bar (they can be combined):
@@ -76,6 +77,25 @@ Why the 500-item floor is all red: 500 items cannot all keep 0.6 m apart on a 20
 plus its clearance needs about 1.2 m², so at most about 200 fit). The test layout packs items so they
 touch, which makes it a worst case for the rule as well as for drawing.
 
+## 3D model optimisation
+
+A 48 MB glTF model (Khronos "Flight Helmet") optimised to **3.42 MB** (−93%): loads in **3.55 s
+instead of 39.1 s** at 10 Mbps, uses **8.7 MB instead of 285 MB** of GPU texture memory, and looks
+almost the same. With 500 copies, instancing cuts draw calls from **5,264 to 11**. Meshopt was chosen
+over Draco after measuring both. Full report, commands and the comparison table:
+[docs/OPTIMISATION.md](docs/OPTIMISATION.md).
+
+```bash
+npm run model:fetch      # download the raw 48 MB model (not in the repo)
+npm run model:optimise   # rebuild public/models/flight-helmet.glb (needs KTX-Software for KTX2 textures)
+```
+
+Compare the versions yourself on the benchmark page (a separate page, not inside the editor):
+http://localhost:5173/model-bench.html with `npm run dev`, or http://localhost:4173/model-bench.html
+after `npm run build && npm run preview` (use this one for measuring). Pick raw or optimised, 1 or 500
+copies, instancing on or off.
+Without `model:fetch`, the raw version is loaded from the Khronos repository.
+
 ## Using the editor
 
 - **Place:** click an item in the palette, then click the floor (the tool stays armed; Esc stops).
@@ -113,4 +133,7 @@ _TODO_: which tools, for what, and how the output was checked. The key prompts a
 
 ## Credits
 
-_TODO_: any third-party models, with source and licence.
+- **Flight Helmet** (benchmark page only): Gary Hsu, from the
+  [Khronos glTF Sample Assets](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/FlightHelmet),
+  CC0 1.0. The optimised `public/models/flight-helmet*.glb` files are made from it.
+- The editor's items are simple boxes drawn in code; no third-party models.

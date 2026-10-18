@@ -10,7 +10,10 @@
     "preview": "vite preview",
     "test": "vitest run",
     "bench": "vitest bench --run",
-    "typecheck": "tsc -b"
+    "typecheck": "tsc -b",
+    "model:fetch": "node scripts/model-fetch.mjs",
+    "model:optimise": "node scripts/model-optimise.mjs",
+    "model:variants": "node scripts/model-optimise.mjs && node scripts/model-optimise.mjs --textures 512"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
@@ -21,6 +24,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@gltf-transform/cli": "^4.5.1",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",

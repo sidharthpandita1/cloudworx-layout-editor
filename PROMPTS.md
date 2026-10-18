@@ -263,6 +263,56 @@ Also moved the `?stats` meters, which covered the header title.
 
 ---
 
+## 9. 3D model optimisation
+
+**Prompt 21**
+> The test looks good and optimised. Let's move on to the next phase.
+
+*Result:* Design before code for the model optimisation plus item: a raw model kept out of git, a
+step-by-step gltf-transform pipeline, a benchmark page (raw/optimised, 1/500 copies, instancing
+on/off), and the same real-Chrome measuring. Four questions. My answers: commit first, then a Khronos
+sample; benchmark page only (not in the editor); KTX2 with WebP fallback; add `@gltf-transform/cli`
+as a dev dependency.
+Built `scripts/model-fetch.mjs`, `scripts/model-optimise.mjs`, `model-bench.html` + `src/bench/`.
+KTX-Software has no Homebrew package, so it was unpacked from the official `.pkg` into `.tools/`.
+Along the way: the final CLI `copy` made the file bigger (replaced by a file copy); UASTC everywhere
+gave 6.29 MB, so ETC1S for colour/ORM; RDO options turned out not to reach the KTX tool (checked with
+`--verbose`), so normal maps went to 512 px instead; three.js already bundles the Basis transcoder, so
+the copy in `public/` was removed.
+*Measured:* 48.39 → 3.42 MB, 94,722 → 53,013 triangles, 285 → 8.7 MB GPU texture memory,
+39.1 → 3.55 s at 10 Mbps; 500 copies 5,264 → 11 draw calls and 78–113 → under 2 ms CPU per frame,
+but still 9–13 FPS because the GPU draws 50–90 million triangles.
+*My review:* _TODO_
+
+**Prompt 22**
+> Which compression library did you use?
+
+*Result:* Meshopt for geometry, Basis Universal in KTX2 (KTX-Software) for textures, meshoptimizer's
+simplifier, sharp for resizing; why Meshopt over Draco and KTX2 over WebP.
+
+**Prompt 23**
+> I have used Draco before; use that and it will definitely go under 1 MB.
+
+*Result:* Tested before switching: Draco 3.34 MB vs Meshopt 3.42 MB, because textures are 2.97 MB
+of the file. Explained that under 1 MB needs smaller textures, not Draco.
+
+**Prompt 24**
+> First report both to me, then we will decide which one is more optimised.
+
+*Result:* Built four versions (Meshopt/Draco × 1024/512 px textures), self-hosted the Draco decoder,
+measured each in Chrome: Draco 2% smaller files but its 204 KB decoder makes it 0.08 s slower at
+10 Mbps; 512 px textures give 2.24 MB / 2.59 s with slightly softer logos.
+
+**Prompt 25**
+> Add this comparison table in the docs for future reference, and let's use Meshopt only.
+
+*Result:* Removed the Draco versions, decoder and option; kept the Meshopt 1024 px (main) and 512 px
+files; wrote `docs/OPTIMISATION.md` with the full results, the Meshopt-vs-Draco table and next steps;
+README section and credits; decisions, assumptions, architecture, plan.
+*My review:* _TODO_
+
+---
+
 _Template for each entry:_
 
 **Prompt N**

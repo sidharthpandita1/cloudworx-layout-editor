@@ -27,4 +27,10 @@ dist-ssr
 notes/
 
 # Raw, unoptimised 3D models (too large for git)
-assets/models/raw/
+# Heavy source models: downloaded by `npm run model:fetch`, never committed
+public/models/raw/
+# Intermediate files from `npm run model:optimise`
+.cache/
+
+# Local build tools (KTX-Software unpacked from its .pkg)
+.tools/

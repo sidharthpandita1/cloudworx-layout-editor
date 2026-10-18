@@ -1,0 +1,97 @@
+:root {
+  --border: #dde2e9;
+  --muted: #5f6b7a;
+  --accent: #2f6fde;
+  font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color: #1c2430;
+  background: #f6f7f9;
+}
+
+body {
+  margin: 0;
+}
+
+.bench {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100vh;
+}
+
+.bench-panel {
+  padding: 16px;
+  overflow-y: auto;
+  background: white;
+  border-right: 1px solid var(--border);
+}
+
+.bench-panel h1 {
+  margin: 0 0 12px;
+  font-size: 1.1rem;
+}
+
+.bench-options {
+  display: grid;
+  grid-template-columns: 90px 1fr 1fr;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.bench-models {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: span 2;
+  gap: 6px;
+}
+
+.bench-options a {
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.bench-options a[aria-current='page'] {
+  border-color: var(--accent);
+  background: #e8f0fd;
+  font-weight: 600;
+}
+
+.bench-panel dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 12px;
+  font-size: 0.9rem;
+}
+
+.bench-panel dt {
+  color: var(--muted);
+}
+
+.bench-panel dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.mono {
+  font-family: ui-monospace, monospace;
+  font-size: 0.8rem;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.bench-view {
+  position: relative;
+  min-width: 0;
+}
+
+.bench-stats {
+  top: auto !important;
+  bottom: 0;
+  left: 320px !important;
+}

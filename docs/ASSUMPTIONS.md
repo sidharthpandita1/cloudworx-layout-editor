@@ -78,6 +78,10 @@ brief left open. Copy the final list into the README.
 15m. The bill of materials counts the saved layout (an item being dragged counts once, as always). It
      lists only the types in use, in catalog order, with the catalog size (width × depth × height,
      before rotation) and a total. No part numbers or prices: the brief gives none.
+18. The model benchmark page is a developer tool: English only, not part of the editor.
+19. The raw model is never committed (48 MB). `npm run model:fetch` downloads it; without it the
+    benchmark page loads the raw version from the Khronos repository.
+20. GPU texture memory figures are `gltf-transform inspect` estimates, not browser measurements.
 
 ## Measurement
 
