@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import { EditorCanvas } from './scene/EditorCanvas'
 import { useEditorStore } from './store/editorStore'
+import { ItemList } from './ui/ItemList'
 import { Palette } from './ui/Palette'
+import { PropertiesPanel } from './ui/PropertiesPanel'
 import { Toolbar } from './ui/Toolbar'
 import { useKeyboardShortcuts } from './ui/useKeyboardShortcuts'
 import { useTranslate } from './ui/useTranslate'
@@ -35,7 +37,7 @@ export default function App() {
         </section>
         <section>
           <h2>{t('panel.items')}</h2>
-          <p className="muted">{t('empty.items')}</p>
+          <ItemList />
         </section>
       </aside>
 
@@ -46,7 +48,7 @@ export default function App() {
       <aside className="panel">
         <section>
           <h2>{t('panel.properties')}</h2>
-          <p className="muted">{t('empty.selection')}</p>
+          <PropertiesPanel />
         </section>
         <section>
           <h2>{t('panel.bom')}</h2>

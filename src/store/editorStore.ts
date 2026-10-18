@@ -29,7 +29,7 @@ interface EditorActions {
   // so every item in the store is always on the grid and fully inside the floor.
   placeItem: (typeId: ItemTypeId, position: Position) => void
   moveItem: (id: string, to: Position) => void
-  rotateItem: (id: string) => void
+  rotateItem: (id: string, to?: QuarterTurns) => void // to the given angle, or one quarter turn on
   deleteItem: (id: string) => void
 
   // Dragging. The item is shown at `drag.position` while the pointer moves; releasing records one
@@ -118,18 +118,19 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     get().execute({ type: 'move', id, from: { x: item.x, z: item.z }, to })
   },
 
-  rotateItem: (id) => {
+  rotateItem: (id, to) => {
     const item = findItem(get().items, id)
     if (!item) return
-    const rotation = ((item.rotation + 1) % 4) as QuarterTurns
+    const rotation = to ?? (((item.rotation + 1) % 4) as QuarterTurns)
+    if (rotation === item.rotation) return // no empty history entries
     const rotate: Command = { type: 'rotate', id, from: item.rotation, to: rotation }
-    const to = rotatedPosition(item, rotation)
-    if (samePosition(item, to)) {
+    const position = rotatedPosition(item, rotation)
+    if (samePosition(item, position)) {
       get().execute(rotate)
       return
     }
     // Rotation also shifted the item to stay aligned: record both as one undo step.
-    const move: Command = { type: 'move', id, from: { x: item.x, z: item.z }, to }
+    const move: Command = { type: 'move', id, from: { x: item.x, z: item.z }, to: position }
     get().execute({ type: 'batch', commands: [rotate, move] })
   },
 

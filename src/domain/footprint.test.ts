@@ -60,6 +60,11 @@ describe('rotatedPosition', () => {
     expect(rotatedPosition(makeItem('transformer', 0.25, 0, 0), 1)).toEqual({ x: 0.5, z: 0.25 })
   })
 
+  it('does not shift a mixed footprint on a 180° turn', () => {
+    expect(rotatedPosition(makeItem('cabinet', 1, -0.25, 0), 2)).toEqual({ x: 1, z: -0.25 })
+    expect(rotatedPosition(makeItem('cabinet', 1.25, 0, 1), 3)).toEqual({ x: 1.25, z: 0 })
+  })
+
   it.each(['cabinet', 'transformer'] as const)('%s returns exactly to the start after 2 and 4 turns', (typeId) => {
     const start = makeItem(typeId, typeId === 'cabinet' ? 1 : 0.25, typeId === 'cabinet' ? -0.25 : 0)
     let item = start

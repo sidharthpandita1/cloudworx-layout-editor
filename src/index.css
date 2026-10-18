@@ -103,6 +103,80 @@ body {
   font-weight: 600;
 }
 
+.item-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item-list button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  border-color: transparent;
+  text-align: start;
+}
+
+.item-list button:hover {
+  background: var(--bg);
+}
+
+.item-list button[aria-current='true'] {
+  border-color: var(--accent);
+  background: #e8f0fd;
+  font-weight: 600;
+}
+
+.item-position {
+  margin-inline-start: auto;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+.properties dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0 0 12px;
+}
+
+.properties dt {
+  color: var(--muted);
+}
+
+.properties dd {
+  margin: 0;
+}
+
+.field {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+input,
+select {
+  min-width: 0;
+  font: inherit;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--panel);
+  color: inherit;
+}
+
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
 .viewport.placing canvas {
   cursor: crosshair;
 }

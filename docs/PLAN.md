@@ -35,9 +35,9 @@ change goes through undo/redo. Get this right first; everything else sits on top
       not every frame). *Done when:* drag then one Ctrl+Z puts the item back where it started.
 - [x] **Rotate** (R key / button, 90° steps) and **delete** (Delete key / button). Both undoable.
 - [x] **Undo/redo shortcuts**: Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z, plus toolbar buttons that disable when empty.
-- [ ] **Placed-items list** (left panel): click a row to select; selecting in 3D highlights and scrolls to
+- [x] **Placed-items list** (left panel): click a row to select; selecting in 3D highlights and scrolls to
       the row. *Done when:* selection stays in sync both ways.
-- [ ] **Properties panel** (right): type, label, x, z, rotation for the selected item. Editing x/z here is
+- [x] **Properties panel** (right): type, label, x, z, rotation for the selected item. Editing x/z here is
       a command too (and snaps).
 - [ ] **Clearance rule** (`src/rules/clearance.ts`): pure function `(items) → violations`. Any two items
       with an edge-to-edge gap under 0.6 m are a violation. Highlight both in 3D and in the list; show a

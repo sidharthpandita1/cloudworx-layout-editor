@@ -159,6 +159,25 @@ the camera; the test was reordered, not the code.)
 
 ---
 
+## 5. Placed-items list and properties panel
+
+**Prompt 16**
+> Now let's move on to the implementation of the next phase.
+
+*Result:* Design before code (list in placement order, scroll-into-view, properties applied on Enter
+or blur so one edit is one undo step), then three questions. My answers: names read-only and derived;
+rotation as a 0/90/180/270° dropdown; x/z as text fields that accept `3.5` and `3,5`.
+Built `ItemList`, `PropertiesPanel`, `i18n/format.ts` (`formatNumber`, `parseNumber`, `itemLabel`,
+with tests) and `rotateItem(id, to?)`. While adding "jump to an angle", the rotation shift rule was
+tightened: a 180° turn keeps the same footprint, so it no longer shifts at all (new test). 72 tests pass.
+*Verified in Chromium:* row click selects in 3D and 3D click highlights the row; typing `3,5` + Enter
+moves the item (one undo step); z = 1 snaps to 1.25; "abc" and Esc revert; Delete inside the field
+edits text, not the layout; x = 99 clamps to the wall; 270° from the dropdown is one undo; Vietnamese
+shows `0,25` and "Tủ điện 1"; selecting item 61 of 62 scrolls its row into view; no console errors.
+*My review:* _TODO_
+
+---
+
 _Template for each entry:_
 
 **Prompt N**

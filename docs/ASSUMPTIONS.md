@@ -53,6 +53,16 @@ brief left open. Copy the final list into the README.
      delete wait until the drag ends, so history never changes under a drag in progress.
 15g. Esc backs out one level at a time: cancel drag, then stop placing, then clear selection.
 15h. Undoing a delete brings the item back but does not reselect it (selection is not in history, see 10).
+15i. The placed-items list is in placement order. Selecting an item anywhere highlights its row and
+     scrolls it into view only if it is hidden.
+15j. Item names cannot be edited; they are always "translated type + number".
+15k. x and z in the properties panel are the item's centre in metres (floor centred on 0). A typed value
+     is applied on Enter or when leaving the field, then snapped like a drag, so the field may show a
+     slightly different number (a cabinet's z of 1 becomes 1.25, because a one-cell-deep item sits
+     mid-cell). Text that isn't a number reverts; Esc puts the old value back. Both `3.5` and `3,5` are
+     accepted; there is no thousands separator (the floor is 20 m wide).
+15l. Choosing a rotation in the dropdown is one undo step, even when it jumps more than 90°. A 180° turn
+     never shifts the item.
 
 ## Measurement
 

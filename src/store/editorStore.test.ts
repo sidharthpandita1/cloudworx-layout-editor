@@ -113,6 +113,25 @@ describe('snapping in the store', () => {
     expect(store.getState().items[0]).toMatchObject({ x: 1, z: -0.25, rotation: 0 })
   })
 
+  it('rotateItem can jump straight to a chosen angle, as one undo step', () => {
+    store.getState().placeItem('cabinet', { x: 1, z: -0.25 })
+    store.getState().rotateItem('cabinet-1', 3)
+    expect(store.getState().items[0]).toMatchObject({ x: 1.25, z: 0, rotation: 3 })
+    store.getState().rotateItem('cabinet-1', 1) // 180° turn: same footprint, no shift
+    expect(store.getState().items[0]).toMatchObject({ x: 1.25, z: 0, rotation: 1 })
+    expect(store.getState().past).toHaveLength(3)
+
+    store.getState().undo()
+    store.getState().undo()
+    expect(store.getState().items[0]).toMatchObject({ x: 1, z: -0.25, rotation: 0 })
+  })
+
+  it('rotating to the current angle records nothing', () => {
+    store.getState().placeItem('cabinet', { x: 1, z: -0.25 })
+    store.getState().rotateItem('cabinet-1', 0)
+    expect(store.getState().past).toHaveLength(1)
+  })
+
   it('rotating a cabinet four times returns it exactly to the start', () => {
     store.getState().placeItem('cabinet', { x: 1, z: -0.25 })
     for (let i = 0; i < 4; i++) store.getState().rotateItem('cabinet-1')

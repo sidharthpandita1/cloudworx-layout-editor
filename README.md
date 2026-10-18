@@ -32,7 +32,7 @@ Add `?stats` to the URL to show the FPS counter.
 - [x] Palette of three item types (cabinet, drive, transformer)
 - [x] Place with grid snapping; select, move (drag), rotate, delete
 - [x] Undo and redo for every edit (toolbar and keyboard)
-- [ ] Placed-items list and properties panel, selection synced with the 3D view
+- [x] Placed-items list and properties panel, selection synced with the 3D view
 - [ ] Clearance rule: items closer than 0.6 m are highlighted with a message naming both
 - [ ] Bill of materials with English / Vietnamese toggle
 
@@ -48,6 +48,9 @@ _TODO_: frame rate with 500 items placed.
 
 - **Place:** click an item in the palette, then click the floor (the tool stays armed; Esc stops).
 - **Select and move:** press on an item and drag; it snaps to the 0.5 m grid. Click empty space to deselect.
+- **List and properties:** click a row in "Placed items" to select it; selecting in 3D highlights the
+  row. In "Properties", type x or z (`3.5` or `3,5`) and press Enter, or pick a rotation. Each change
+  is one undo step and snaps to the grid.
 - **Camera:** drag empty space to orbit, scroll to zoom, right-drag to pan.
 
 ## Keyboard shortcuts

@@ -55,13 +55,15 @@ export function snapItemPosition(raw: Position, typeId: ItemTypeId, rotation: Qu
  * swapping them moves each centre between "on a grid line" and "mid-cell", so it must shift by
  * half a cell (0.25 m). It shifts forward going to 90°/270° and back going to 0°/180°, so
  * rotating twice or four times returns exactly to the start instead of drifting.
+ * A 180° turn keeps the same footprint, so it never shifts.
  * Near a wall the result is clamped inside the floor.
  */
 export function rotatedPosition(item: PlacedItem, rotation: QuarterTurns): Position {
   const { widthCells, depthCells } = CATALOG[item.typeId]
   const mixedParity = (widthCells + depthCells) % 2 === 1
+  const sidesSwap = (item.rotation + rotation) % 2 === 1 // 0°/180° ↔ 90°/270°
   const direction = rotation % 2 === 1 ? 1 : -1
-  const shift = mixedParity ? (direction * CELL_SIZE) / 2 : 0
+  const shift = mixedParity && sidesSwap ? (direction * CELL_SIZE) / 2 : 0
   return snapItemPosition({ x: item.x + shift, z: item.z + shift }, item.typeId, rotation)
 }
 
