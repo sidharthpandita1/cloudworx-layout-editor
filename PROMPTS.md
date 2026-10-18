@@ -366,6 +366,24 @@ closing 1 → 0.98 → 0.74 → 0.34 → hidden at ~190 ms, the backdrop fading 
 and "Got it"; focus still returns afterwards; no console errors.
 *My review:* _TODO_
 
+**Prompt 29**
+> (With a screenshot of the dialog.) It looks too jarring. As a UX engineer I prefer proper spacing
+> and proper font sizes; right now it's hard to tell headings and subheadings apart.
+
+*Result:* A clear type scale: title 20px semibold, group headings 15px semibold in normal case (were
+small grey capitals), rows 14px regular, keys 12px. Spacing on a 4px grid: 24px edges and between
+groups, 8px under a heading. Each group is one rounded card with lines only between its rows (were
+lines across everything). Title and "Got it" stay fixed; only the list scrolls. Rows changed from a
+table to a description list (`<dl>`) with flex rows, because the shared table columns squeezed short
+labels to make room for the widest key cell. Only this platform's keys are shown (⌘ on a Mac, Ctrl
+elsewhere), which shortened the Redo row from three alternatives to one. Keys use the UI font
+instead of monospace; "+" and "/" are smaller and grey. On open, focus goes to the title (no focus
+ring flashing on ✕); "0.5 m" no longer breaks across lines.
+*Verified in Chrome:* screenshots at 1280×900, 1280×700 and 390 px wide, in EN and VI; footer always
+visible; Tab order title → ✕ → list → "Got it", and focus stays in the dialog; no console errors.
+124 tests pass, typecheck, lint and build clean.
+*My review:* _TODO_
+
 ---
 
 _Template for each entry:_
