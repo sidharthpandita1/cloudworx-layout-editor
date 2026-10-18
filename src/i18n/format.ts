@@ -1,5 +1,6 @@
 import { CATALOG } from '../domain/catalog'
 import type { PlacedItem } from '../domain/types'
+import { MIN_CLEARANCE, type Violation } from '../rules/clearance'
 import { translate, type Locale } from './index'
 
 // Creating an Intl.NumberFormat is slow compared with using one, so keep one per language.
@@ -32,4 +33,26 @@ export function parseNumber(text: string): number | null {
 /** An item's display name, such as "Cabinet 2" or "Tủ điện 2". Built when shown, never stored. */
 export function itemLabel(locale: Locale, item: Pick<PlacedItem, 'typeId' | 'number'>): string {
   return `${translate(locale, CATALOG[item.typeId].nameKey)} ${item.number}`
+}
+
+/**
+ * "1 clearance problem" / "2 clearance problems". Intl.PluralRules picks the form for the language:
+ * English has "one" and "other"; Vietnamese has only "other", so it never changes.
+ */
+export function formatViolationCount(locale: Locale, count: number): string {
+  const form = new Intl.PluralRules(locale).select(count) === 'one' ? 'rule.count.one' : 'rule.count.other'
+  return translate(locale, form, { count })
+}
+
+type Labelled = Pick<PlacedItem, 'typeId' | 'number'>
+
+/** The message for one violation, naming both items, e.g. "Cabinet 2 and Drive 5 are 0.5 m apart; minimum is 0.6 m." */
+export function formatViolation(locale: Locale, violation: Violation, a: Labelled, b: Labelled): string {
+  const names = { a: itemLabel(locale, a), b: itemLabel(locale, b) }
+  if (violation.overlap) return translate(locale, 'rule.overlap', names)
+  return translate(locale, 'rule.tooClose', {
+    ...names,
+    gap: formatNumber(locale, violation.gap),
+    min: formatNumber(locale, MIN_CLEARANCE),
+  })
 }

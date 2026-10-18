@@ -33,8 +33,8 @@ and makes it easy to explain in the review.
         │                                                              clear future
         ▼
  store updates ──► derived values recomputed from items[]:
-                     • violations = checkClearance(items)
-                     • bom        = countByType(items)
+                     • violations = findViolations(items, with the live drag position)
+                     • bom        = billOfMaterials(items)
         │
         ▼
  scene and panels re-render from the same state
@@ -60,16 +60,18 @@ and makes it easy to explain in the review.
    clamp with `snapItemPosition` / `rotatedPosition` (`src/domain/footprint.ts`), so no caller (drag,
    properties panel, keyboard, assistant) can put an item off-grid. The drag preview uses the same
    function, so what you see is where it lands. A rotation that also shifts the item is one `batch`.
+   **Items never overlap** for the same reason: the helpers ask `findBlockingItem` (`src/rules/overlap.ts`)
+   first and, if something is in the way, record nothing and set a `notice` (shown as a toast) instead.
 7. **Rendering is instanced.** One `InstancedMesh` per item type, so draw calls stay flat as items grow.
 
 ## Folder guide
 
 | Folder | Contains | Imports allowed |
 |---|---|---|
-| `src/domain` | types, catalog, grid maths, footprints and snapping, `groupItemsByType` | nothing app-specific |
-| `src/rules` | clearance rule | `domain` |
-| `src/i18n` | `en.ts`, `vi.ts`, `translate()` | nothing |
+| `src/domain` | types, catalog, grid maths, footprints and snapping, `groupItemsByType`, `withDragPosition`, `billOfMaterials` | nothing app-specific |
+| `src/rules` | clearance rule `findViolations` (+ benchmark) | `domain` |
+| `src/i18n` | `en.ts`, `vi.ts`, `translate()` with `{placeholders}`, number/label/message formatting | `domain`, `rules` (types and constants only) |
 | `src/commands` | command definitions | `domain` |
-| `src/store` | Zustand store, history | `domain`, `commands`, `rules`, `i18n` |
+| `src/store` | Zustand store, history, cached `selectViolations` | `domain`, `commands`, `rules`, `i18n` |
 | `src/scene` | R3F: `Floor` (placing + preview), `ItemInstances`, `SelectionOutline`, `PlacementPreview` | `store`, `domain` |
-| `src/ui` | panels (`Palette`, `Toolbar`), `shortcuts` (pure key mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |
+| `src/ui` | panels (`Palette`, `Toolbar`, `ItemList`, `PropertiesPanel`, `ClearancePanel`, `BomTable`, `NoticeToast`), `shortcuts` (pure key mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |

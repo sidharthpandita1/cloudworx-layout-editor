@@ -180,7 +180,11 @@ describe('dragging', () => {
 
   it('startDrag begins at the item position', () => {
     store.getState().startDrag('drive-1')
-    expect(store.getState().drag).toEqual({ id: 'drive-1', position: { x: 0.25, z: 0.25 } })
+    expect(store.getState().drag).toEqual({
+      id: 'drive-1',
+      position: { x: 0.25, z: 0.25 },
+      target: { x: 0.25, z: 0.25 },
+    })
   })
 
   it('updateDrag snaps and clamps the live position, and records no history', () => {
@@ -230,5 +234,64 @@ describe('dragging', () => {
     store.getState().updateDrag({ x: 5, z: 5 })
     store.getState().startDrag('missing')
     expect(store.getState().drag).toBeNull()
+  })
+})
+
+describe('items never overlap', () => {
+  // Cabinet spans x −0.5…0.5, z 0…0.5. Drive-1 starts well away from it.
+  beforeEach(() => {
+    store.getState().placeItem('cabinet', { x: 0, z: 0.25 })
+    store.getState().placeItem('drive', { x: 3.25, z: 0.25 })
+  })
+
+  it('refuses to place on top of another item, shows a notice and keeps the number free', () => {
+    store.getState().placeItem('drive', { x: 0.25, z: 0.25 })
+    const { items, past, notice, nextNumber } = store.getState()
+    expect(items).toHaveLength(2)
+    expect(past).toHaveLength(2)
+    expect(notice).toMatchObject({ message: 'blocked.position', blocker: { typeId: 'cabinet', number: 1 } })
+    expect(nextNumber.drive).toBe(2)
+  })
+
+  it('allows touching', () => {
+    store.getState().placeItem('drive', { x: 0.75, z: 0.25 })
+    expect(store.getState().items).toHaveLength(3)
+    expect(store.getState().notice).toBeNull()
+  })
+
+  it('refuses a move onto another item', () => {
+    store.getState().moveItem('drive-1', { x: 0.25, z: 0.25 })
+    expect(store.getState().items[1]).toMatchObject({ x: 3.25, z: 0.25 })
+    expect(store.getState().past).toHaveLength(2)
+    expect(store.getState().notice?.message).toBe('blocked.position')
+  })
+
+  it('refuses a rotation that would reach another item', () => {
+    // A drive just in front of the cabinet: touching at 0°, but the turned cabinet is 1 m deep.
+    store.getState().moveItem('drive-1', { x: 0.25, z: 0.75 })
+    store.getState().rotateItem('cabinet-1')
+    expect(store.getState().items[0].rotation).toBe(0)
+    expect(store.getState().notice?.message).toBe('blocked.rotation')
+  })
+
+  it('a drag skips occupied cells and drops at the last free one', () => {
+    store.getState().startDrag('drive-1')
+    store.getState().updateDrag({ x: 1.25, z: 0.25 }) // free
+    store.getState().updateDrag({ x: 0.25, z: 0.25 }) // on the cabinet
+    expect(store.getState().drag?.position).toEqual({ x: 1.25, z: 0.25 })
+    expect(store.getState().notice?.message).toBe('blocked.position')
+
+    const firstNotice = store.getState().notice
+    store.getState().endDrag() // released over the cabinet
+    expect(store.getState().items[1]).toMatchObject({ x: 1.25, z: 0.25 })
+    expect(store.getState().notice).not.toBe(firstNotice) // the warning pops up again
+    expect(store.getState().past).toHaveLength(3) // one move
+  })
+
+  it('undo never brings back an overlap, because every recorded state was free', () => {
+    store.getState().moveItem('drive-1', { x: 1.25, z: 0.25 })
+    store.getState().moveItem('drive-1', { x: 0.25, z: 0.25 }) // refused
+    store.getState().undo()
+    expect(store.getState().items[1]).toMatchObject({ x: 3.25, z: 0.25 })
   })
 })

@@ -1,4 +1,4 @@
-import type { ItemTypeId, PlacedItem } from './types'
+import type { ItemTypeId, PlacedItem, Position } from './types'
 
 /**
  * Splits items by type, keeping their order. Each list feeds one InstancedMesh, so an instance's
@@ -8,4 +8,13 @@ export function groupItemsByType(items: PlacedItem[]): Record<ItemTypeId, Placed
   const groups: Record<ItemTypeId, PlacedItem[]> = { cabinet: [], drive: [], transformer: [] }
   for (const item of items) groups[item.typeId].push(item)
   return groups
+}
+
+/**
+ * The layout as it looks right now: the item being dragged is at its live drag position.
+ * Used by the clearance rule so warnings update during a drag, before anything is recorded.
+ */
+export function withDragPosition(items: PlacedItem[], drag: { id: string; position: Position } | null): PlacedItem[] {
+  if (!drag) return items
+  return items.map((item) => (item.id === drag.id ? { ...item, ...drag.position } : item))
 }

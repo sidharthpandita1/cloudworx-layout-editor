@@ -178,6 +178,69 @@ shows `0,25` and "Tủ điện 1"; selecting item 61 of 62 scrolls its row into 
 
 ---
 
+## 6. Clearance rule
+
+**Prompt 17**
+> OK, let's move on to the next plan.
+
+*Result:* Design before code: pure `findViolations(items)`, edge-to-edge gap, derived (never stored),
+red per-instance colour, ⚠ in the list, a "Clearance" panel with translated messages. Four questions.
+My answers: true shortest distance (diagonal neighbours 0.71 m apart are allowed); live while
+dragging; whole item turns red (no extra draw calls); naive pair check first, measure, then decide.
+Built `rules/clearance.ts` (+ 7 tests for touching, 0.59, 0.6, rotated, overlap, diagonal),
+`clearance.bench.ts`, cached `store/violations.ts` (+ tests), `{placeholder}` support in
+`translate()`, `formatViolation` / `formatViolationCount` (`Intl.PluralRules`), `ClearancePanel`,
+red instances in `ItemInstances`, ⚠ in `ItemList` (rows memoised). 88 tests pass.
+*Measured:* ~1.1 ms per full check at 500 items on an Apple M4, so no spatial grid needed.
+*Verified in Chromium:* dragging a cabinet onto a drive turns both red mid-drag with "Cabinet 1 and
+Drive 1 overlap."; Esc clears it; x = 1,25 in the panel gives "… are 0.5 m apart; minimum is 0.6 m.";
+clicking a message selects the item; three items give three messages; Vietnamese messages; undo
+clears everything; no console errors. One fix after a screenshot: long Vietnamese names with the ⚠
+badge pushed the position text onto two lines, so the position no longer wraps.
+*My review:* _TODO_
+
+---
+
+**Prompt 18**
+> There is one problem with the violation: the user should not even be able to place one block on any
+> other. A warning should pop up on the screen that the block is overlapping, and the user should not
+> be able to place the item.
+
+*Result:* Design before code: refuse overlapping edits in the store helpers (like snapping), red ghost
+while placing, a toast. Three questions. My answers: block all edits (place, drag, rotate, properties);
+for drags, don't snap back to the start, just don't let the item go onto another one and keep showing
+the warning; toast over the 3D view.
+Built `rules/overlap.ts` (`findBlockingItem`, + 4 tests), overlap checks and a `notice` in the store
+(+ 6 tests), `drag.target` so the item stays at the last free cell, `NoticeToast`, red ghost in
+`PlacementPreview`. 98 tests pass.
+*Verified in Chromium:* clicking on top of a cabinet shows "Can't put it here: Cabinet 1 is in the
+way." and places nothing; dragging a cabinet across a drive stops before it, the warning pops up at
+each blocked cell, the cabinet jumps to the far side once a free cell is reached, and release records
+one move; R with a drive in front shows "Can't rotate: Drive 1 is in the way."; typing an overlapping z
+in properties reverts the field and shows the warning; Vietnamese toast; no console errors.
+(One test step was wrong at first: x = 0 snaps a drive to 0.25, where it already was, so nothing was
+tried. The test was changed to an overlapping z.)
+*My review:* _TODO_
+
+---
+
+## 7. Bill of materials
+
+**Prompt 19**
+> We have not implemented the bill of materials that we were told to do specifically. Implement that,
+> and then I will review.
+
+*Result:* Built directly (I asked to review after): pure `domain/bom.ts` (`billOfMaterials`, + 3
+tests), `BomTable` (item with colour swatch, size W × D × H, quantity, total row), EN/VI headers.
+Choices made without asking, listed for my review: only types in use, catalog order, catalog size
+before rotation, no part numbers or prices (the brief gives none). 101 tests pass.
+*Verified in Chromium:* empty message; placing a drive adds a row; 3 cabinets + 2 drives + 1
+transformer gives 3 / 2 / 1, total 6; Delete gives 5 and Undo gives 6 again; Vietnamese headers and
+decimal commas (0,5 × 0,5 × 1,2); no console errors.
+*My review:* _TODO_
+
+---
+
 _Template for each entry:_
 
 **Prompt N**

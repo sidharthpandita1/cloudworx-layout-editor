@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 import { EditorCanvas } from './scene/EditorCanvas'
+import { BomTable } from './ui/BomTable'
+import { ClearancePanel } from './ui/ClearancePanel'
 import { useEditorStore } from './store/editorStore'
 import { ItemList } from './ui/ItemList'
+import { NoticeToast } from './ui/NoticeToast'
 import { Palette } from './ui/Palette'
 import { PropertiesPanel } from './ui/PropertiesPanel'
 import { Toolbar } from './ui/Toolbar'
@@ -43,16 +46,21 @@ export default function App() {
 
       <main className={isPlacing ? 'viewport placing' : 'viewport'}>
         <EditorCanvas />
+        <NoticeToast />
       </main>
 
       <aside className="panel">
+        <section>
+          <h2>{t('panel.clearance')}</h2>
+          <ClearancePanel />
+        </section>
         <section>
           <h2>{t('panel.properties')}</h2>
           <PropertiesPanel />
         </section>
         <section>
           <h2>{t('panel.bom')}</h2>
-          <p className="muted">{t('empty.bom')}</p>
+          <BomTable />
         </section>
       </aside>
     </div>

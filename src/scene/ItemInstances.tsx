@@ -1,11 +1,12 @@
 import { useThree, type ThreeEvent } from '@react-three/fiber'
 import { useLayoutEffect, useMemo, useRef } from 'react'
-import { Object3D, type InstancedMesh } from 'three'
+import { Color, Object3D, type InstancedMesh } from 'three'
 import { ITEM_TYPES } from '../domain/catalog'
 import { CELL_SIZE } from '../domain/grid'
 import { groupItemsByType } from '../domain/items'
 import type { ItemType, PlacedItem, Position } from '../domain/types'
 import { useEditorStore } from '../store/editorStore'
+import { useViolations } from '../store/violations'
 import { CLICK_TOLERANCE_PX, floorPointFromRay } from './interaction'
 
 /** Instances allocated per type: the brief's maximum scene size. See docs/ASSUMPTIONS.md. */
@@ -20,10 +21,14 @@ export function Items() {
 
 // Reused scratch object for building instance matrices.
 const scratch = new Object3D()
+/** Colour of an item that breaks the clearance rule. The selection outline stays yellow on top. */
+const VIOLATION_COLOR = new Color('#d93636')
 
 function ItemInstances({ type, items }: { type: ItemType; items: PlacedItem[] }) {
   const meshRef = useRef<InstancedMesh>(null)
   const drag = useEditorStore((state) => state.drag)
+  const { violatingIds } = useViolations()
+  const typeColor = useMemo(() => new Color(type.color), [type.color])
   const { select, startDrag, updateDrag, endDrag } = useEditorStore.getState()
   const getThree = useThree((state) => state.get)
   // Pointer-to-item-centre offset at the moment of grabbing, so the item doesn't jump to the cursor.
@@ -41,13 +46,16 @@ function ItemInstances({ type, items }: { type: ItemType; items: PlacedItem[] })
       scratch.rotation.set(0, (item.rotation * Math.PI) / 2, 0)
       scratch.updateMatrix()
       mesh.setMatrixAt(i, scratch.matrix)
+      // Per-instance colour: still one draw call however many items are red.
+      mesh.setColorAt(i, violatingIds.has(item.id) ? VIOLATION_COLOR : typeColor)
     }
     mesh.count = count
     mesh.instanceMatrix.needsUpdate = true
+    if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true
     // three.js computes this once and caches it; without a refresh, clicks and camera culling
     // would ignore newly placed or moved items.
     mesh.computeBoundingSphere()
-  }, [items, type, drag])
+  }, [items, type, drag, violatingIds, typeColor])
 
   function handlePointerDown(event: ThreeEvent<PointerEvent>) {
     // While placing, let the press fall through to the floor so items can be placed anywhere.
@@ -109,7 +117,8 @@ function ItemInstances({ type, items }: { type: ItemType; items: PlacedItem[] })
       onClick={handleClick}
     >
       <boxGeometry args={[type.widthCells * CELL_SIZE, type.height, type.depthCells * CELL_SIZE]} />
-      <meshStandardMaterial color={type.color} />
+      {/* White, because each instance's colour is multiplied with the material colour. */}
+      <meshStandardMaterial color="white" />
     </instancedMesh>
   )
 }

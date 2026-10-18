@@ -33,12 +33,16 @@ Add `?stats` to the URL to show the FPS counter.
 - [x] Place with grid snapping; select, move (drag), rotate, delete
 - [x] Undo and redo for every edit (toolbar and keyboard)
 - [x] Placed-items list and properties panel, selection synced with the 3D view
-- [ ] Clearance rule: items closer than 0.6 m are highlighted with a message naming both
-- [ ] Bill of materials with English / Vietnamese toggle
+- [x] Clearance rule: items closer than 0.6 m turn red (live while dragging), with a message naming both
+- [x] Items can never overlap: placing, dragging, rotating or typing a position onto another item is refused with a warning
+- [x] Bill of materials (item, size, quantity, total) with English / Vietnamese toggle
 
 ## Performance
 
 _TODO_: frame rate with 500 items placed.
+
+Clearance rule at 500 items (every pair, 124,750 checks): **~1.1 ms** per full check on an Apple M4
+(16 GB), Node 25. Run it with `npm run bench`.
 
 | Items | FPS | Draw calls | Hardware | Browser |
 |---|---|---|---|---|
@@ -51,6 +55,8 @@ _TODO_: frame rate with 500 items placed.
 - **List and properties:** click a row in "Placed items" to select it; selecting in 3D highlights the
   row. In "Properties", type x or z (`3.5` or `3,5`) and press Enter, or pick a rotation. Each change
   is one undo step and snaps to the grid.
+- **Overlaps:** items can't be put on top of each other. While placing, the ghost turns red over an
+  occupied spot; dragging stops at the last free cell; a red message says which item is in the way.
 - **Camera:** drag empty space to orbit, scroll to zoom, right-drag to pan.
 
 ## Keyboard shortcuts

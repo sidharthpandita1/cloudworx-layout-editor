@@ -15,7 +15,8 @@ be able to explain and change every line, so favour simple, readable code over c
 - `src/commands`: every layout edit is a plain-data command applied with `applyCommand` and undone with
   `invertCommand`. Never mutate items directly; go through the store's `execute`.
 - `src/store`: Zustand store is the single source of truth for items, selection, history and locale.
-  Its edit helpers snap and clamp, so every stored item is on the grid and inside the floor.
+  Its edit helpers snap and clamp, so every stored item is on the grid and inside the floor, and they
+  refuse edits that would overlap another item (setting a `notice` instead).
 - `src/scene` (R3F) and `src/ui` (panels) read from the store and dispatch commands.
 - Violations and the bill of materials are derived from items, never stored.
 - Items render with one `InstancedMesh` per item type.
