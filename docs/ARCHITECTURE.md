@@ -70,10 +70,10 @@ and makes it easy to explain in the review.
 |---|---|---|
 | `src/domain` | types, catalog, grid maths, footprints and snapping, `groupItemsByType`, `withDragPosition`, `nextNumbers`, `billOfMaterials`, `seedLayout` | nothing app-specific |
 | `src/rules` | clearance rule `findViolations` (+ benchmark) | `domain` |
-| `src/i18n` | `en.ts`, `vi.ts`, `translate()` with `{placeholders}`, number/label/message formatting | `domain`, `rules` (types and constants only) |
+| `src/i18n` | `en.ts`, `vi.ts`, `translate()` with `{placeholders}`, number/label/message formatting, screen-reader sentences (`announce.ts`) | `domain`, `rules` (types and constants only) |
 | `src/commands` | command definitions | `domain` |
 | `src/store` | Zustand store, history, `loadLayout`, cached `selectViolations` | `domain`, `commands`, `rules`, `i18n` |
 | `src/scene` | R3F: `Floor` (placing + preview), `ItemInstances`, `SelectionOutline`, `PlacementPreview`, `RenderInfo` (draw calls, `?stats`) | `store`, `domain` |
 | `src/bench` | model optimisation benchmark page (`model-bench.html`): raw vs optimised, 1 or 500 copies, instancing on/off | three.js, drei; nothing from the editor |
 | `scripts` | `model-fetch.mjs`, `model-optimise.mjs` (the glTF pipeline, see docs/OPTIMISATION.md) | Node only |
-| `src/ui` | panels (`Palette`, `Toolbar`, `ItemList`, `PropertiesPanel`, `ClearancePanel`, `BomTable`, `NoticeToast`), `shortcuts` (pure key mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |
+| `src/ui` | panels (`Palette`, `Toolbar`, `ItemList`, `PropertiesPanel`, `ClearancePanel`, `BomTable`, `NoticeToast`, `Announcer`, `ShortcutsDialog`), `shortcuts` (pure key and arrow mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |

@@ -313,6 +313,61 @@ README section and credits; decisions, assumptions, architecture, plan.
 
 ---
 
+## 10. Keyboard editing
+
+**Prompt 26**
+> Commit this and let's move to keyboard editing.
+
+*Result:* Design before code: the list as one Tab stop (listbox, ↑/↓/Home/End), a focusable 3D view,
+arrows move the selected item through the existing store helpers, and one live region whose sentences
+are built from the edit command. Three questions. My answers: arrows work anywhere except text fields
+and the list; fixed floor axes; one undo step per press.
+Built `moveFor` / `isInListbox` (+ tests), store `nudgeItem` and `announcement` (+ tests),
+`i18n/announce.ts` (`describeCommand`, `describeSelection`, + tests in EN and VI), `Announcer`, the
+listbox `ItemList`, the focusable 3D view (`role="application"` + help text). 123 tests pass.
+*Verified in Chromium:* Tab reaches the list, ↓/↓/End/Home select and are announced ("Drive 1
+selected, x -4.75, z 2.75, 0°."), ← in the list does nothing; in the 3D view → moves 0.5 m, ↑ moves
+towards the back wall, Shift+→ moves 2 m, each announced; undo/redo announced ("Undo: Cabinet 1 moved
+to x 0.5, z -0.75."); at the wall "Cabinet 1 is at the wall." and nothing recorded; R and Delete
+announced; Vietnamese announcement after switching; arrows inside the X field only move the cursor;
+clicking the 3D view focuses it; no console errors. (One test used `window`, which doesn't exist in
+the Node test runner; the test was fixed, not the code.)
+*My review:* _TODO_
+
+---
+
+**Prompt 27**
+> I was thinking about the keyboard shortcuts that we have added: we need to inform users that there
+> are keyboard shortcuts too, so we need an info popup while the app loads, and then that popup stays
+> in the navbar.
+
+*Result:* Design before code: a native `<dialog>` listing every shortcut in groups (EN/VI), a header
+button and the `?` key to reopen it, editor shortcuts paused while it is open, and no auto-open while
+measuring. Two questions. My answers: open by itself on the first visit only; modal dialog.
+Built `ShortcutsDialog` + `ShortcutsButton`, store `shortcutsOpen`, `?` in `shortcutFor` (+ test),
+`isMeasuring`. 124 tests pass.
+*Verified in Chromium:* opens on the first visit, not after a reload; `?`, the header button, Esc,
+the backdrop and "Got it" all open/close it and focus returns to the button; → and Delete do nothing
+while it is open and Esc closes only the dialog (selection kept); Vietnamese title; stays closed in a
+fresh browser with `?seed=20&stats`; no console errors.
+*My review:* _TODO_
+
+**Prompt 28**
+> One more thing: there is no easing animation when the popup opens and closes. Apply some kind of
+> animation, something like ease in and ease out, then I will review it.
+
+*Result:* CSS only, no JavaScript: the dialog fades in and rises slightly (opacity + small scale/move),
+and the dimmed background fades with it. Opening eases out in 0.22 s (starts fast, settles); closing
+eases in in 0.15 s (gathers speed as it leaves). Uses `@starting-style` and `transition-behavior:
+allow-discrete` on `display`/`overlay`, so the native `<dialog>` keeps all its keyboard and focus
+behaviour. Turned off for "reduce motion"; older browsers just open/close instantly.
+*Verified in Chrome:* opacity sampled every frame: opening 0 → 0.24 → 0.63 → 0.91 → 1 over ~250 ms;
+closing 1 → 0.98 → 0.74 → 0.34 → hidden at ~190 ms, the backdrop fading in step; same for Esc, `?`
+and "Got it"; focus still returns afterwards; no console errors.
+*My review:* _TODO_
+
+---
+
 _Template for each entry:_
 
 **Prompt N**

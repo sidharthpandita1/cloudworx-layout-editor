@@ -16,6 +16,16 @@ export interface Notice {
   id: number // new for every notice, so the same warning shown again pops up again
 }
 
+/**
+ * What the screen-reader live region says next (see ui/Announcer). Data, not text, so it is translated
+ * when shown. `id` is new every time, so the same sentence twice is still read out twice.
+ */
+export type Announcement =
+  | { kind: 'edit'; command: Command; via: 'edit' | 'undo' | 'redo'; id: number } // the command applied
+  | { kind: 'selected'; itemId: string; id: number }
+  | { kind: 'deselected'; id: number }
+  | { kind: 'wall'; itemId: string; id: number } // an arrow-key move that the wall stopped
+
 interface EditorState {
   items: PlacedItem[]
   selectedId: string | null
@@ -29,6 +39,8 @@ interface EditorState {
   // which may be occupied by another item; the item does not follow the pointer onto it.
   drag: { id: string; position: Position; target: Position } | null
   notice: Notice | null
+  announcement: Announcement | null
+  shortcutsOpen: boolean // the keyboard shortcuts dialog; editor shortcuts pause while it is open
 }
 
 interface EditorActions {
@@ -44,6 +56,8 @@ interface EditorActions {
   moveItem: (id: string, to: Position) => void
   rotateItem: (id: string, to?: QuarterTurns) => void // to the given angle, or one quarter turn on
   deleteItem: (id: string) => void
+  /** Moves an item by a distance (arrow keys). Says so if the wall stops it. */
+  nudgeItem: (id: string, delta: Position) => void
 
   // Dragging. The item is shown at `drag.position` while the pointer moves; releasing records one
   // move (one undo step), cancelling puts it back. Occupied cells are skipped.
@@ -63,6 +77,7 @@ interface EditorActions {
   select: (id: string | null) => void
   setActiveTool: (typeId: ItemTypeId | null) => void
   setLocale: (locale: Locale) => void
+  setShortcutsOpen: (open: boolean) => void
   dismissNotice: () => void
 }
 
@@ -78,6 +93,8 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
   nextNumber: { cabinet: 1, drive: 1, transformer: 1 },
   drag: null,
   notice: null,
+  announcement: null,
+  shortcutsOpen: false,
 
   execute: (command) =>
     set((state) => {
@@ -87,6 +104,7 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         past: [...state.past, command].slice(-HISTORY_LIMIT),
         future: [],
         selectedId: keepSelection(state.selectedId, items),
+        announcement: announce({ kind: 'edit', command, via: 'edit' }),
       }
     }),
 
@@ -94,12 +112,14 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     set((state) => {
       const command = state.past.at(-1)
       if (!command) return state
-      const items = applyCommand(state.items, invertCommand(command))
+      const inverse = invertCommand(command)
+      const items = applyCommand(state.items, inverse)
       return {
         items,
         past: state.past.slice(0, -1),
         future: [...state.future, command],
         selectedId: keepSelection(state.selectedId, items),
+        announcement: announce({ kind: 'edit', command: inverse, via: 'undo' }),
       }
     }),
 
@@ -113,6 +133,7 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
         past: [...state.past, command].slice(-HISTORY_LIMIT),
         future: state.future.slice(0, -1),
         selectedId: keepSelection(state.selectedId, items),
+        announcement: announce({ kind: 'edit', command, via: 'redo' }),
       }
     }),
 
@@ -178,6 +199,17 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
     execute({ type: 'delete', item: items[index], index })
   },
 
+  nudgeItem: (id, delta) => {
+    const item = findItem(get().items, id)
+    if (!item) return
+    const to = snapItemPosition({ x: item.x + delta.x, z: item.z + delta.z }, item.typeId, item.rotation)
+    if (samePosition(item, to)) {
+      set({ announcement: announce({ kind: 'wall', itemId: id }) })
+      return
+    }
+    get().moveItem(id, to) // refuses overlaps with a notice, like every other move
+  },
+
   startDrag: (id) => {
     const item = findItem(get().items, id)
     if (!item) return
@@ -225,15 +257,33 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
       activeTool: null,
       drag: null,
       notice: null,
+      announcement: null,
     }),
 
-  select: (id) => set({ selectedId: id }),
+  select: (id) =>
+    set((state) => {
+      if (id === state.selectedId) return state // e.g. pressing the already-selected item to drag it
+      return {
+        selectedId: id,
+        announcement: announce(id ? { kind: 'selected', itemId: id } : { kind: 'deselected' }),
+      }
+    }),
   setActiveTool: (typeId) => set({ activeTool: typeId }),
   setLocale: (locale) => set({ locale }),
+  setShortcutsOpen: (open) => set({ shortcutsOpen: open }),
   dismissNotice: () => set({ notice: null }),
 }))
 
 let noticeCount = 0
+let announcementCount = 0
+
+// Distributes Omit over the union, so each kind keeps its own fields.
+type AnnouncementData = Announcement extends infer A ? (A extends Announcement ? Omit<A, 'id'> : never) : never
+
+function announce(data: AnnouncementData): Announcement {
+  announcementCount += 1
+  return { ...data, id: announcementCount } as Announcement
+}
 
 function showNotice(message: Notice['message'], blocker: PlacedItem) {
   noticeCount += 1

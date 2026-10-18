@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isTypingTarget, shortcutFor } from './shortcuts'
+import { BIG_MOVE, isInListbox, isTypingTarget, moveFor, shortcutFor } from './shortcuts'
 
 function press(key: string, modifiers: Partial<Record<'ctrlKey' | 'metaKey' | 'shiftKey' | 'altKey', boolean>> = {}) {
   return shortcutFor({ key, ctrlKey: false, metaKey: false, shiftKey: false, altKey: false, ...modifiers })
@@ -32,6 +32,10 @@ describe('shortcutFor', () => {
     expect(press('Escape')).toBe('escape')
   })
 
+  it('help with ?', () => {
+    expect(press('?', { shiftKey: true })).toBe('help')
+  })
+
   it('leaves browser shortcuts alone', () => {
     expect(press('r', { ctrlKey: true })).toBeNull() // reload
     expect(press('r', { metaKey: true })).toBeNull()
@@ -42,6 +46,37 @@ describe('shortcutFor', () => {
   it('ignores other keys', () => {
     expect(press('z')).toBeNull()
     expect(press('a')).toBeNull()
+  })
+})
+
+describe('moveFor', () => {
+  const arrow = (key: string, modifiers: Partial<Record<'ctrlKey' | 'metaKey' | 'shiftKey' | 'altKey', boolean>> = {}) =>
+    moveFor({ key, ctrlKey: false, metaKey: false, shiftKey: false, altKey: false, ...modifiers })
+
+  it('moves one cell along the fixed floor axes', () => {
+    expect(arrow('ArrowLeft')).toEqual({ x: -0.5, z: 0 })
+    expect(arrow('ArrowRight')).toEqual({ x: 0.5, z: 0 })
+    expect(arrow('ArrowUp')).toEqual({ x: 0, z: -0.5 }) // towards the back wall
+    expect(arrow('ArrowDown')).toEqual({ x: 0, z: 0.5 })
+  })
+
+  it('moves 2 m with Shift', () => {
+    expect(arrow('ArrowRight', { shiftKey: true })).toEqual({ x: BIG_MOVE, z: 0 })
+  })
+
+  it('leaves Ctrl/Cmd/Alt + arrow and other keys alone', () => {
+    expect(arrow('ArrowLeft', { metaKey: true })).toBeNull() // Cmd+← is "back" in some browsers
+    expect(arrow('ArrowLeft', { altKey: true })).toBeNull()
+    expect(arrow('a')).toBeNull()
+  })
+})
+
+describe('isInListbox', () => {
+  it('is true inside an element with role="listbox"', () => {
+    const inside = { closest: (selector: string) => (selector === '[role="listbox"]' ? {} : null) }
+    expect(isInListbox(inside as unknown as EventTarget)).toBe(true)
+    expect(isInListbox({ closest: () => null } as unknown as EventTarget)).toBe(false)
+    expect(isInListbox({} as EventTarget)).toBe(false) // e.g. window: no closest()
   })
 })
 

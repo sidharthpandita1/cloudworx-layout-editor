@@ -82,6 +82,14 @@ brief left open. Copy the final list into the README.
 19. The raw model is never committed (48 MB). `npm run model:fetch` downloads it; without it the
     benchmark page loads the raw version from the Khronos repository.
 20. GPU texture memory figures are `gltf-transform inspect` estimates, not browser measurements.
+21. Arrow keys follow the floor axes, not the camera: ← → along x, ↑ towards the back wall (−z).
+22. Each arrow press is one undo step, and holding a key repeats it.
+23. In the placed-items list, ↑/↓/Home/End change the selection, and ←/→ do nothing (the list keeps
+    them). Everywhere else, except text fields and dropdowns, the arrows move the selected item.
+24. Every edit, undo, redo and selection change is announced, whether it came from the mouse or the
+    keyboard. Refused edits are announced by the warning toast (`role="alert"`).
+25. The shortcuts dialog opens by itself once per browser (first visit), and never with `?seed` or `?stats`.
+    If the browser blocks storage, it opens on every visit instead.
 
 ## Measurement
 

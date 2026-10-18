@@ -8,6 +8,9 @@ import { useEditorStore } from './store/editorStore'
  */
 export const urlOptions = new URLSearchParams(window.location.search)
 
+/** Measuring or testing: things that would get in the way, like the first-visit help, stay closed. */
+export const isMeasuring = urlOptions.has('seed') || urlOptions.has('stats')
+
 export function applyUrlOptions() {
   const seed = Number.parseInt(urlOptions.get('seed') ?? '', 10)
   if (seed > 0) useEditorStore.getState().loadLayout(seedLayout(seed))

@@ -65,7 +65,7 @@ Priority order. Stop when time runs out; a solid editor beats half-finished extr
        `docs/OPTIMISATION.md`. Also show draw calls for 500 items with and without instancing.
        *Done:* 48.39 → 3.42 MB, 39.1 → 3.55 s at 10 Mbps, 500 copies 5,264 → 11 draw calls; Meshopt
        chosen over Draco after measuring both. LOD and simpler glass are listed as next steps.
-2. [ ] **Keyboard editing**: Tab into the canvas or list, arrow keys move by one cell, Delete removes,
+2. [x] **Keyboard editing**: Tab into the canvas or list, arrow keys move by one cell, Delete removes,
        and an `aria-live` region announces "Cabinet 2 moved to x 3.5, z −1.0".
 3. [ ] **Assistant preview (mock)**: a panel that streams a canned reply token by token, proposes a move
        that fixes a violation, shows it as a translucent ghost, Accept applies it as **one command**
