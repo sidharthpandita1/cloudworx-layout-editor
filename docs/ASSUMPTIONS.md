@@ -81,5 +81,11 @@ brief left open. Copy the final list into the README.
 
 ## Measurement
 
-15. FPS is measured on a production build (`npm run build && npm run preview`), at 1080p browser window,
-    with the `?stats` counter, after the scene settles.
+15. FPS is measured on a production build (`npm run build && npm run preview`) with `?seed=500&stats`,
+    in a 1280 × 700 Chrome window at pixel ratio 2 (the largest that fits the MacBook Air screen), after
+    the scene settles. See the README for the method and numbers.
+16. The 500-item test layout (`?seed=500`) is loaded as the starting layout, like opening a file: it is
+    not an undo step. It has 20 transformers, 180 cabinets and 300 drives, touching but not overlapping.
+17. Key names (Ctrl, ⌘, Shift), the axis letters x and z, and units (m, °) are the same in both
+    languages. Everything else on screen, including the tab title, tooltips, screen-reader labels and
+    messages, is translated.

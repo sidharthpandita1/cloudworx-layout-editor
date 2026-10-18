@@ -44,15 +44,15 @@ change goes through undo/redo. Get this right first; everything else sits on top
       message naming both ("Cabinet 2 and Drive 5 are 0.4 m apart; minimum is 0.6 m").
       *Done when:* unit tests cover touching, 0.59 m, 0.6 m and rotated items.
 - [x] **Bill of materials**: table counted from the scene (derived, never stored), labels translated.
-- [ ] **EN/VI toggle** covers every visible string, including violation messages and number formats
+- [x] **EN/VI toggle** covers every visible string, including violation messages and number formats
       (`Intl.NumberFormat`).
 - [x] **Instanced rendering** (done early, in the placing phase): switch to one `InstancedMesh` per item type, so 500 items cost ~3 draw calls
       instead of 500. Keep per-instance colour for selection and violation highlights.
-- [ ] **500-item stress test**: a dev-only button or `?seed=500` to fill the floor. Measure FPS on a
+- [x] **500-item stress test**: a dev-only button or `?seed=500` to fill the floor. Measure FPS on a
       production build (`npm run build && npm run preview`, open with `?stats`). Write the numbers down.
 - [x] **Rule performance at 500 items**: naive pair check is 124,750 pairs per edit. Measure it; if it is
       slow, use a uniform spatial grid so each item only checks its neighbours.
-      *Measured:* ~1.1 ms per full check (`npm run bench`, Apple M4), so the naive check stays.
+      *Measured:* ~1.4 ms per full check of the `?seed=500` layout (`npm run bench`, Apple M4), so the naive check stays.
 
 ## Day 3 — Plus items and README
 

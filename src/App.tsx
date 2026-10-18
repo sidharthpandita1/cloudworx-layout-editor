@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { translate } from './i18n'
 import { EditorCanvas } from './scene/EditorCanvas'
 import { BomTable } from './ui/BomTable'
 import { ClearancePanel } from './ui/ClearancePanel'
@@ -18,9 +19,10 @@ export default function App() {
   const t = useTranslate()
   useKeyboardShortcuts()
 
-  // Screen readers and CSS line-breaking rules depend on the document language.
+  // Screen readers and CSS line-breaking rules depend on the document language; the tab title follows it too.
   useEffect(() => {
     document.documentElement.lang = locale
+    document.title = translate(locale, 'app.title')
   }, [locale])
 
   return (

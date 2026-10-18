@@ -18,3 +18,10 @@ export function withDragPosition(items: PlacedItem[], drag: { id: string; positi
   if (!drag) return items
   return items.map((item) => (item.id === drag.id ? { ...item, ...drag.position } : item))
 }
+
+/** The next free label number per type after loading a layout: one more than the highest in use. */
+export function nextNumbers(items: PlacedItem[]): Record<ItemTypeId, number> {
+  const next: Record<ItemTypeId, number> = { cabinet: 1, drive: 1, transformer: 1 }
+  for (const item of items) next[item.typeId] = Math.max(next[item.typeId], item.number + 1)
+  return next
+}

@@ -241,6 +241,28 @@ decimal commas (0,5 × 0,5 × 1,2); no console errors.
 
 ---
 
+## 8. 500-item stress test and FPS
+
+**Prompt 20**
+> OK, let's move on to the next plan phase.
+
+*Result:* Design before code: EN/VI audit (only the tab title was left), a pure `seedLayout(count)`
+loaded by `?seed=500`, a draw-call overlay for `?stats`, and measuring idle / orbit / drag on a
+production build. Pointed out that 500 items can't all keep 0.6 m apart on this floor. Three
+questions. My answers: URL only; the seeded layout is the starting layout (not undoable); Claude
+scripts the measurement in real Chrome and I confirm by eye.
+Built `domain/seed.ts` (+ 4 tests), `nextNumbers`, store `loadLayout` (+ test), `urlOptions.ts`,
+`RenderInfo`, translated tab title; the benchmark now uses the same 500-item layout. 107 tests pass.
+*Measured* (MacBook Air M4, Chrome 155, three runs): 60 FPS idle, orbiting and dragging; 5 draw calls;
+main thread 1.1–2.6 ms per frame; 470–900 FPS with vsync off. Rule ~1.4 ms.
+*Investigated:* a single long frame in one drag run. Timed each step: selecting is fine; once the
+first warning toast took 250 ms, but five repeats and three variants (no animation, no `role=alert`)
+showed nothing. Recorded as a rare one-off, plus a 2.4 s pause seen only in the vsync-off scripted run.
+Also moved the `?stats` meters, which covered the header title.
+*My review:* _TODO_
+
+---
+
 _Template for each entry:_
 
 **Prompt N**

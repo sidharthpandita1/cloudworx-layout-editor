@@ -1,12 +1,14 @@
 import { OrbitControls, Stats } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber'
 import { useEditorStore } from '../store/editorStore'
+import { urlOptions } from '../urlOptions'
 import { Floor } from './Floor'
 import { Items } from './ItemInstances'
+import { RenderInfo } from './RenderInfo'
 import { SelectionOutline } from './SelectionOutline'
 
-// Open the app with ?stats to show the FPS counter (used for the README measurement).
-const showStats = new URLSearchParams(window.location.search).has('stats')
+// Open the app with ?stats to show the FPS meter and draw calls (used for the README measurement).
+const showStats = urlOptions.has('stats')
 
 /**
  * A click on the background (nothing hit) clears the selection, like a click on empty floor.
@@ -27,7 +29,8 @@ export function EditorCanvas() {
       <Items />
       <SelectionOutline />
       <OrbitControls makeDefault maxPolarAngle={Math.PI / 2.2} />
-      {showStats && <Stats />}
+      {showStats && <Stats className="stats" />}
+      {showStats && <RenderInfo />}
     </Canvas>
   )
 }

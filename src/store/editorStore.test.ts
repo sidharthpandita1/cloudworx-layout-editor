@@ -295,3 +295,18 @@ describe('items never overlap', () => {
     expect(store.getState().items[1]).toMatchObject({ x: 3.25, z: 0.25 })
   })
 })
+
+describe('loadLayout', () => {
+  it('replaces the layout and starts with empty history', () => {
+    store.getState().placeItem('cabinet', { x: 0, z: 0.25 })
+    store.getState().loadLayout([{ id: 'drive-4', typeId: 'drive', number: 4, x: 0.25, z: 0.25, rotation: 0 }])
+    const { items, past, future, selectedId } = store.getState()
+    expect(items.map((item) => item.id)).toEqual(['drive-4'])
+    expect([past, future, selectedId]).toEqual([[], [], null])
+
+    store.getState().undo() // nothing to undo
+    expect(store.getState().items).toHaveLength(1)
+    store.getState().placeItem('drive', { x: 3.25, z: 0.25 })
+    expect(store.getState().items[1].id).toBe('drive-5') // numbering continues after the loaded items
+  })
+})

@@ -281,6 +281,26 @@ select:focus-visible {
   outline-offset: 1px;
 }
 
+/* Developer meters (?stats), in the bottom-right corner of the 3D view, clear of the header and panels.
+   !important because the FPS meter sets its own inline position. */
+.stats {
+  top: auto !important;
+  right: 300px !important;
+  bottom: 22px !important;
+  left: auto !important;
+}
+
+.render-info {
+  position: fixed;
+  right: 300px;
+  bottom: 0;
+  z-index: 10000;
+  padding: 2px 6px;
+  background: rgb(0 0 34 / 0.85);
+  color: #0ff;
+  font: 11px/1.4 ui-monospace, monospace;
+}
+
 .viewport.placing canvas {
   cursor: crosshair;
 }

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { applyCommand, invertCommand, type Command } from '../commands/commands'
 import { rotatedPosition, snapItemPosition } from '../domain/footprint'
+import { nextNumbers } from '../domain/items'
 import type { ItemTypeId, PlacedItem, Position, QuarterTurns } from '../domain/types'
 import type { Locale } from '../i18n'
 import { findBlockingItem } from '../rules/overlap'
@@ -50,6 +51,13 @@ interface EditorActions {
   updateDrag: (rawPosition: Position) => void
   endDrag: () => void
   cancelDrag: () => void
+
+  /**
+   * Replaces the whole layout, like opening a saved file: history starts empty, so it can't be undone.
+   * Used by `?seed=N` for the performance test. The items are trusted; data from outside (a host app)
+   * would need checking for overlaps and off-grid positions first.
+   */
+  loadLayout: (items: PlacedItem[]) => void
 
   // Not edits: these are not recorded in history.
   select: (id: string | null) => void
@@ -206,6 +214,18 @@ export const useEditorStore = create<EditorStore>()((set, get) => ({
   },
 
   cancelDrag: () => set({ drag: null }),
+
+  loadLayout: (items) =>
+    set({
+      items,
+      nextNumber: nextNumbers(items),
+      past: [],
+      future: [],
+      selectedId: null,
+      activeTool: null,
+      drag: null,
+      notice: null,
+    }),
 
   select: (id) => set({ selectedId: id }),
   setActiveTool: (typeId) => set({ activeTool: typeId }),
