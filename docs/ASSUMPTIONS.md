@@ -104,6 +104,18 @@ brief left open. Copy the final list into the README.
     between makes it out of date.
 28. Hiding a side panel is a view preference per browser, not part of the layout or of undo history.
 
+## Host app and backends
+
+29. Sign-in is not in the editor. The brief says the host app owns sign-in (OpenID Connect) and passes
+    the context (user, project, access token) into the micro-app. So the editor has no login screen and
+    no user: it opens straight onto the layout. The hand-off from the host is not built here; Part A
+    section 5 describes it.
+30. There is no backend. The layout lives in the browser's memory and is lost on reload; the assistant
+    is a mock that runs in the browser. In the real product the backend services (not the host) expose
+    REST and a WebSocket channel: the editor loads and saves the layout over REST with the token the
+    host passed in, and receives other people's changes over the WebSocket. Edits are already
+    plain-data commands, so the same command can be sent to the server. Part A section 2 covers this.
+
 
 ## Measurement
 

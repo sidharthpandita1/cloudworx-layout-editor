@@ -471,6 +471,18 @@ strings, styles and tests, mostly by restoring the files from before the keyboar
 and ⌘Z undoes it; Esc deselects; Delete removes; `?` does nothing; no console errors.
 *My review:* _TODO_
 
+**Prompt 36**
+> In ASSUMPTIONS.md we have to add that I am assuming the sign-in is in the editor because the host
+> owns it, and "Backends expose REST plus a WebSocket channel for live updates" is also owned by the
+> host, right?
+
+*Result:* Half right. Sign-in: the host owns it, so the editor has *no* sign-in. Backends: they are
+separate services, not part of the host; the host only passes the token, and the editor calls REST and
+the WebSocket itself. This prototype has no backend at all (layout in memory, mock assistant). Added
+ASSUMPTIONS 29 (no sign-in in the editor) and 30 (no backend; how the real product would use REST and
+WebSocket), in a new "Host app and backends" section.
+*My review:* _TODO_
+
 ---
 
 _Template for each entry:_
