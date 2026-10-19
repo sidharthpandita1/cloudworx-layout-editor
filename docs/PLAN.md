@@ -65,8 +65,9 @@ Priority order. Stop when time runs out; a solid editor beats half-finished extr
        `docs/OPTIMISATION.md`. Also show draw calls for 500 items with and without instancing.
        *Done:* 48.39 → 3.42 MB, 39.1 → 3.55 s at 10 Mbps, 500 copies 5,264 → 11 draw calls; Meshopt
        chosen over Draco after measuring both. LOD and simpler glass are listed as next steps.
-2. [x] **Keyboard editing**: Tab into the canvas or list, arrow keys move by one cell, Delete removes,
-       and an `aria-live` region announces "Cabinet 2 moved to x 3.5, z −1.0".
+2. [-] ~~**Keyboard editing**: Tab into the canvas or list, arrow keys move by one cell, Delete removes,
+       and an `aria-live` region announces "Cabinet 2 moved to x 3.5, z −1.0".~~
+       *Built, then removed on 2026-10-19 (plus items are "pick any"; see DECISIONS). In git history at `a751f17`.*
 3. [x] **Assistant preview (mock)**: a panel that streams a canned reply token by token, proposes a move
        that fixes a violation, shows it as a translucent ghost, Accept applies it as **one command**
        (so one undo reverts it), Reject discards it.
@@ -91,11 +92,14 @@ Use `notes/PART_A_OUTLINE.md` (private) as the skeleton.
 
 ## Day 5 — Polish and submit
 
-- [ ] Fresh clone → `npm install` → `npm run dev` works first time (they will run it from the README).
-- [ ] `npm run typecheck`, `npm test`, `npm run lint`, `npm run build` all clean.
+- [x] Fresh clone → `npm install` → `npm run dev` works first time (they will run it from the README).
+      *Checked 2026-10-19 on a fresh clone of `1263216`; repeat after the last commit.*
+- [x] `npm run typecheck`, `npm test`, `npm run lint`, `npm run build` all clean.
+      *Checked 2026-10-19 on a fresh clone of `1263216`; repeat after the last commit.* 152 tests.
 - [ ] Deploy (Vercel or Netlify, free) and check the deployed link on another device.
 - [ ] Export the design document as one PDF; re-read it as a stranger would.
-- [ ] Make sure the assessment PDF and `notes/` are **not** in the repo.
+- [x] Make sure the assessment PDF and `notes/` are **not** in the repo.
+      *Checked 2026-10-19 on a fresh clone of `1263216`; repeat after the last commit.*
 - [ ] Email the PDF + repo link + deployed link. Subject: `Frontend Assessment: <Your Name>`.
 
 ---

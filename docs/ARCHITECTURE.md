@@ -80,11 +80,11 @@ The assistant joins the same flow at the end, as one more source of commands:
 |---|---|---|
 | `src/domain` | types, catalog, grid maths, footprints and snapping, `groupItemsByType`, `withDragPosition`, `nextNumbers`, `billOfMaterials`, `seedLayout` | nothing app-specific |
 | `src/rules` | clearance rule `findViolations` (+ benchmark) | `domain` |
-| `src/i18n` | `en.ts`, `vi.ts`, `translate()` with `{placeholders}`, number/label/message formatting, screen-reader sentences (`announce.ts`) | `domain`, `rules` (types and constants only) |
+| `src/i18n` | `en.ts`, `vi.ts`, `translate()` with `{placeholders}`, number/label/message formatting | `domain`, `rules` (types and constants only) |
 | `src/commands` | command definitions | `domain` |
 | `src/assistant` | `fix.ts` (pure: nearest clear spot, fix one / fix all as move commands), `mockAssistant.ts` (the `Assistant` contract, intent matching, reply planning, word-by-word stream), `assistantStore.ts` (conversation, proposals, accept/reject) | `domain`, `rules`, `commands`, `i18n`; the store also reads and calls `store` (`execute`) |
 | `src/store` | Zustand store, history, `loadLayout`, cached `selectViolations` | `domain`, `commands`, `rules`, `i18n` |
 | `src/scene` | R3F: `Floor` (placing + preview), `ItemInstances`, `SelectionOutline`, `PlacementPreview`, `ProposalPreview` (assistant ghosts and arrows), `RenderInfo` (draw calls, `?stats`) | `store`, `domain` |
 | `src/bench` | model optimisation benchmark page (`model-bench.html`): raw vs optimised, 1 or 500 copies, instancing on/off | three.js, drei; nothing from the editor |
 | `scripts` | `model-fetch.mjs`, `model-optimise.mjs` (the glTF pipeline, see docs/OPTIMISATION.md) | Node only |
-| `src/ui` | panels (`Palette`, `Toolbar`, `ItemList`, `PropertiesPanel`, `ClearancePanel`, `BomTable`, `NoticeToast`, `Announcer`, `ShortcutsDialog`, `AssistantPanel` (bubble + chat), `SidePanel` + `usePanelOpen` (collapsible columns)), `shortcuts` (pure key and arrow mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |
+| `src/ui` | panels (`Palette`, `Toolbar`, `ItemList`, `PropertiesPanel`, `ClearancePanel`, `BomTable`, `NoticeToast`, `AssistantPanel` (bubble + chat), `SidePanel` + `usePanelOpen` (collapsible columns)), `shortcuts` (pure key mapping), `useTranslate`, `useKeyboardShortcuts` | `store`, `domain`, `i18n` |

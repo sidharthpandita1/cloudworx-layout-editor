@@ -55,11 +55,6 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.header-actions {
-  display: flex;
-  gap: 6px;
-}
-
 .app-header h1 {
   margin: 0;
   font-size: 1.1rem;
@@ -190,29 +185,23 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-radius: 6px;
 }
 
-.item-list:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-}
-
-.item-list li {
+.item-list button {
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
   padding: 4px 8px;
-  border: 1px solid transparent;
-  border-radius: 6px;
-  cursor: pointer;
+  border-color: transparent;
+  text-align: start;
 }
 
-.item-list li:hover {
+.item-list button:hover {
   background: var(--bg);
 }
 
-.item-list li[aria-selected='true'] {
+.item-list button[aria-current='true'] {
   border-color: var(--accent);
   background: #e8f0fd;
   font-weight: 600;
@@ -336,7 +325,7 @@ select:focus-visible {
   outline-offset: 1px;
 }
 
-/* Developer meters (?stats), in the bottom-right corner of the 3D view, clear of the header and panels.
+/* Developer meters (?stats), in the bottom-left corner of the 3D view, clear of the header and panels.
    !important because the FPS meter sets its own inline position. */
 .stats {
   top: auto !important;
@@ -354,16 +343,6 @@ select:focus-visible {
   background: rgb(0 0 34 / 0.85);
   color: #0ff;
   font: 11px/1.4 ui-monospace, monospace;
-}
-
-.canvas-focus {
-  width: 100%;
-  height: 100%;
-}
-
-.canvas-focus:focus-visible {
-  outline: 3px solid var(--accent);
-  outline-offset: -3px;
 }
 
 /* Read by screen readers, not shown. */
@@ -413,120 +392,13 @@ button:focus-visible {
   outline-offset: 2px;
 }
 
-/* Keyboard shortcuts dialog */
-.shortcuts-dialog {
-  width: min(640px, calc(100vw - 32px));
-  max-height: calc(100vh - 48px);
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  color: var(--text);
-  box-shadow: 0 12px 40px rgb(0 0 0 / 0.25);
-}
-
-/*
- * Open and close animation, CSS only. A transition uses the timing of the state it moves *to*:
- * opening (to [open]) eases out, so it starts fast and settles; closing eases in, so it gathers speed
- * as it leaves. `display` and `overlay` are "allow-discrete" so the dialog stays visible, in the top
- * layer, until the closing fade ends. @starting-style is where the opening starts from. Browsers
- * without these features simply open and close instantly, as before.
- */
-.shortcuts-dialog {
-  opacity: 0;
-  transform: translateY(8px) scale(0.97);
-  transition:
-    opacity 0.15s ease-in,
-    transform 0.15s ease-in,
-    display 0.15s allow-discrete,
-    overlay 0.15s allow-discrete;
-}
-
-.shortcuts-dialog[open] {
-  opacity: 1;
-  transform: none;
-  transition-duration: 0.22s;
-  transition-timing-function: ease-out;
-}
-
-@starting-style {
-  .shortcuts-dialog[open] {
-    opacity: 0;
-    transform: translateY(8px) scale(0.97);
-  }
-}
-
-.shortcuts-dialog::backdrop {
-  background: rgb(15 20 30 / 0);
-  transition:
-    background-color 0.15s ease-in,
-    display 0.15s allow-discrete,
-    overlay 0.15s allow-discrete;
-}
-
-.shortcuts-dialog[open]::backdrop {
-  background: rgb(15 20 30 / 0.45);
-  transition-duration: 0.22s;
-  transition-timing-function: ease-out;
-}
-
-@starting-style {
-  .shortcuts-dialog[open]::backdrop {
-    background: rgb(15 20 30 / 0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .shortcuts-dialog,
-  .shortcuts-dialog::backdrop {
-    transition: none;
-  }
-}
-
-/*
- * Type scale in the dialog: title 20px semibold > group heading 15px semibold > row 14px regular >
- * keys 12px. Spacing on a 4px grid: 24px around the edges and between groups, 8px under a heading.
- */
-.shortcuts-dialog {
-  overflow: hidden; /* the body scrolls, not the dialog */
-}
-
-.shortcuts-content {
-  display: flex;
-  flex-direction: column;
-  max-height: calc(100vh - 48px);
-}
-
-.shortcuts-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 24px 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.shortcuts-header h2 {
-  margin: 0;
-  outline: none; /* focused only by script, as the dialog's starting point; not a control */
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.shortcuts-header p {
-  margin: 4px 0 0;
-  font-size: 0.875rem;
-  line-height: 1.45;
-  color: var(--muted);
-}
-
 .icon-button {
   display: grid;
   place-items: center;
   flex: none;
   width: 32px;
   height: 32px;
-  margin: -4px -8px 0 0; /* line the glyph up with the title and the right edge */
+  margin: -4px -8px 0 0; /* line the glyph up with the heading and the right edge */
   padding: 0;
   border-color: transparent;
   background: transparent;
@@ -539,107 +411,6 @@ button:focus-visible {
   color: var(--text);
 }
 
-.shortcuts-body {
-  min-height: 0;
-  overflow-y: auto;
-  padding: 20px 24px 24px;
-}
-
-.shortcuts-group + .shortcuts-group {
-  margin-top: 24px;
-}
-
-.shortcuts-group h3 {
-  margin: 0 0 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.shortcuts-body:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-}
-
-/* Each group is one quiet card; thin lines only between its rows. */
-.shortcuts-group dl {
-  margin: 0;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 0.875rem;
-  line-height: 1.4;
-}
-
-.shortcut-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 44px;
-  padding: 8px 12px;
-}
-
-.shortcut-row + .shortcut-row {
-  border-top: 1px solid var(--border);
-}
-
-.shortcut-row dd {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  align-items: center;
-  flex: none;
-  max-width: 60%;
-  margin: 0;
-  row-gap: 4px;
-}
-
-.key-combo {
-  display: inline-flex;
-  align-items: center;
-  white-space: nowrap;
-}
-
-.key-plus,
-.key-or {
-  color: var(--muted);
-  font-size: 0.75rem;
-  white-space: pre; /* keep the spaces around the + and / */
-}
-
-.key-or {
-  opacity: 0.6;
-  padding-inline: 2px;
-}
-
-.shortcuts-footer {
-  display: flex;
-  justify-content: flex-end;
-  padding: 12px 24px;
-  border-top: 1px solid var(--border);
-}
-
-.shortcuts-footer button {
-  padding: 8px 20px;
-  font-weight: 600;
-}
-
-kbd {
-  display: inline-block;
-  min-width: 24px;
-  padding: 2px 6px;
-  border: 1px solid var(--border);
-  border-radius: 5px;
-  background: var(--panel);
-  box-shadow: inset 0 -1px 0 var(--border);
-  color: var(--text);
-  font-family: inherit;
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1.4;
-  text-align: center;
-}
-
 button.primary {
   border-color: var(--accent);
   background: var(--accent);
@@ -649,7 +420,7 @@ button.primary {
 /*
  * Assistant: a round bubble in the bottom-right corner of the 3D view, and the chat window above it.
  * The chat is always in the page; closed, it is hidden (visibility) and inert, so it can animate out.
- * Same timing as the shortcuts dialog: ease-out 0.22 s opening, ease-in 0.15 s closing.
+ * Opening eases out over 0.22 s (starts fast, settles); closing eases in over 0.15 s.
  */
 .assistant-dock {
   position: absolute;

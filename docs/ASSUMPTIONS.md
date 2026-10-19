@@ -82,32 +82,27 @@ brief left open. Copy the final list into the README.
 19. The raw model is never committed (48 MB). `npm run model:fetch` downloads it; without it the
     benchmark page loads the raw version from the Khronos repository.
 20. GPU texture memory figures are `gltf-transform inspect` estimates, not browser measurements.
-21. Arrow keys follow the floor axes, not the camera: ← → along x, ↑ towards the back wall (−z).
-22. Each arrow press is one undo step, and holding a key repeats it.
-23. In the placed-items list, ↑/↓/Home/End change the selection, and ←/→ do nothing (the list keeps
-    them). Everywhere else, except text fields and dropdowns, the arrows move the selected item.
-24. Every edit, undo, redo and selection change is announced, whether it came from the mouse or the
-    keyboard. Refused edits are announced by the warning toast (`role="alert"`).
-25. The shortcuts dialog opens by itself once per browser (first visit), and never with `?seed` or `?stats`.
-    If the browser blocks storage, it opens on every visit instead.
+21. The keyboard covers the core edits only: undo, redo, rotate (R), delete and Esc. There are no
+    arrow-key moves and no screen-reader announcements of edits (see DECISIONS, "Keyboard editing").
+    Refused edits are still read out, through the warning toast (`role="alert"`).
 
 ## Assistant
 
-26. The assistant is a mock that runs in the browser (the brief asks for a mock). It understands three
+22. The assistant is a mock that runs in the browser (the brief asks for a mock). It understands three
     requests: fix one clearance problem, fix all, and summarise. Typed text is matched by keywords in
     English or Vietnamese; anything else gets a short "what I can do" reply.
-27. "Fix" means moving items only, never rotating or deleting them. A moved item keeps its rotation and
+23. "Fix" means moving items only, never rotating or deleting them. A moved item keeps its rotation and
     ends up at least 0.6 m from everything. "Fix one" fixes the selected item's problem if it has one,
     otherwise the first problem in the list.
-28. "Fix all" proposes at most 10 moves and looks at no more than 30 problems, so a proposal stays easy to
+24. "Fix all" proposes at most 10 moves and looks at no more than 30 problems, so a proposal stays easy to
     check and a reply stays fast. It may leave some problems; the reply says so.
-29. Only one proposal is open at a time; asking again replaces it. The conversation is kept for the
+25. Only one proposal is open at a time; asking again replaces it. The conversation is kept for the
     session only, and replies stay in the language they were written in after a language switch.
-30. The chat can cover part of the 3D view while it is open; closing it keeps the conversation and any
+26. The chat can cover part of the 3D view while it is open; closing it keeps the conversation and any
     waiting proposal (the ghosts stay visible).
-31. A proposal is applied only to the exact layout it was planned on. Any edit (including undo) in
+27. A proposal is applied only to the exact layout it was planned on. Any edit (including undo) in
     between makes it out of date.
-32. Hiding a side panel is a view preference per browser, not part of the layout or of undo history.
+28. Hiding a side panel is a view preference per browser, not part of the layout or of undo history.
 
 
 ## Measurement

@@ -29,7 +29,7 @@ npm run model:fetch / model:optimise / model:variants   # 3D model optimisation 
 Options in the address bar (they can be combined):
 
 - `?seed=500` starts with 500 items (any number; it stops when the floor is full)
-- `?stats` shows the FPS meter and a draw-call counter in the bottom-right corner of the 3D view
+- `?stats` shows the FPS meter and a draw-call counter in the bottom-left corner of the 3D view
 
 For example: `npm run build && npm run preview`, then open http://localhost:4173/?seed=500&stats
 
@@ -42,8 +42,6 @@ For example: `npm run build && npm run preview`, then open http://localhost:4173
 - [x] Placed-items list and properties panel, selection synced with the 3D view
 - [x] Clearance rule: items closer than 0.6 m turn red (live while dragging), with a message naming both
 - [x] Items can never overlap: placing, dragging, rotating or typing a position onto another item is refused with a warning
-- [x] Keyboard editing: select from the list with ↑/↓, move with the arrow keys, rotate, delete and undo
-  without a mouse; every edit and selection is announced to screen readers (English and Vietnamese)
 - [x] Bill of materials (item, size, quantity, total) with English / Vietnamese toggle
 - [x] Both side panels can be hidden (chevron button in their top corner) to give the 3D view more room;
   the choice is remembered in the browser
@@ -132,16 +130,10 @@ Without `model:fetch`, the raw version is loaded from the Khronos repository.
 | Rotate selected 90° | R | R |
 | Delete selected | Delete or Backspace | Delete |
 | Cancel drag / stop placing / deselect | Esc | Esc |
-| Move selected item one cell (0.5 m) | ← → ↑ ↓ | ← → ↑ ↓ |
-| Move selected item 2 m | Shift + arrow | Shift + arrow |
-| In the placed-items list: previous / next / first / last item | ↑ ↓ Home End | ↑ ↓ Home End (Fn+←/→) |
-| Show this list in the app | ? | ? |
 
-The same list opens in the app the first time you visit, and any time from the **⌨ Shortcuts** button in
-the header or the **?** key. (It does not open by itself with `?seed` or `?stats`, so it never gets in
-the way of a measurement.) The arrows follow the floor, not the camera: ← → along x, ↑ towards the back wall. The placed-items
-list and the 3D view are one Tab stop each. Screen readers announce every edit, undo, redo and
-selection, for example "Cabinet 2 moved to x 3.5, z -1.".
+These cover the core edits. Arrow-key moves, keyboard navigation of the item list and screen-reader
+announcements (the brief's optional "Keyboard editing" item) were built and then removed to keep the
+submission focused; see docs/DECISIONS.md.
 
 ## Assumptions
 

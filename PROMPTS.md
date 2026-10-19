@@ -432,6 +432,45 @@ and the canvas re-renders at the new size; Enter on the focused button works and
 the closed state survives a reload; Vietnamese labels; no console errors.
 *My review:* _TODO_
 
+**Prompt 33**
+> We are stopping on extras right now, so two things I am thinking of removing: keyboard shortcuts and
+> screen-reader announcements. → (after Claude's advice to keep both) Remove the screen-reader
+> announcements first only.
+
+*Result:* Claude advised keeping both (keyboard editing with announcements is a plus item in the brief
+and supports Part A section 4) and asked what to remove; my choice: the announcements only. Removed
+`ui/Announcer.tsx`, `i18n/announce.ts` (+ tests), the store's `announcement` state and `announce()`,
+and the `announce.*` strings. `nudgeItem` now just calls `moveItem` (which already stops at the wall).
+Kept: labels, the listbox pattern, the warning toast, the clearance count, the assistant log.
+Docs updated (README, DECISIONS, ASSUMPTIONS 24, ARCHITECTURE, PLAN). 146 tests pass.
+*My review:* _TODO_
+
+**Prompt 34**
+> (Screenshot of the brief's Part B list.) As you can see in the image, the keyboard shortcuts are in
+> Part B.
+
+*Result:* The brief's "Keyboard editing" plus item reads "Select, move by one cell and delete from the
+keyboard, with screen-reader announcements", so both stay. The removal from prompt 33 was not
+committed, so it was undone by restoring the files from the last commit (`git restore`): the
+announcer, its strings and tests, and the docs are back as they were. 152 tests pass.
+*My review:* _TODO_
+
+**Prompt 35**
+> No, no, read the document properly: it says "pick any". We already have the assistant, so we can
+> safely remove keyboard shortcuts, right?
+
+*Result:* Yes: plus items are optional, and model optimisation and the assistant preview stay. Claude
+noted the trade-offs (a finished third plus item; Part A section 4 asks about keyboard and screen
+readers; Ctrl+Z, R, Delete and Esc belong to the core editing) and asked how much to remove. My
+choice: the plus item only. Removed arrow-key moves, the list's keyboard navigation (rows are plain
+buttons again), the screen-reader announcer, the shortcuts dialog and its header button, and their
+strings, styles and tests, mostly by restoring the files from before the keyboard commit
+(`de43274`). Kept Ctrl/⌘+Z, Ctrl/⌘+Shift+Z / Ctrl+Y, R, Delete/Backspace and Esc. Docs updated
+(README, DECISIONS, ASSUMPTIONS 21, ARCHITECTURE, PLAN). 138 tests pass.
+*Verified in Chrome:* no dialog on the first visit and no Shortcuts button; → does nothing; R rotates
+and ⌘Z undoes it; Esc deselects; Delete removes; `?` does nothing; no console errors.
+*My review:* _TODO_
+
 ---
 
 _Template for each entry:_
