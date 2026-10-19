@@ -68,7 +68,8 @@ triangles.
 - **How:** a Playwright script drove a real Chrome window: 5 s idle, 5 s orbiting, 6 s dragging an item
   back and forth (every new cell re-runs the clearance rule and updates the list). Frame times come from
   `requestAnimationFrame`; main-thread time from Chrome's performance counters. Three runs each; the
-  numbers above are the range. I also checked by eye with `?stats`.
+  numbers above are the range. I also checked by eye with `?stats`. The Playwright script was a one-off and is not in
+  the repo; the on-screen counter with `?seed=500&stats` reproduces the by-eye check.
 - 60 FPS is the screen's limit, so the vsync-off column (Chrome started with `--disable-gpu-vsync
   --disable-frame-rate-limit`) shows how much headroom is left.
 - **Honest notes:** in about ten runs, two single long frames (100 ms and 250 ms) appeared once each

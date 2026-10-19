@@ -483,6 +483,82 @@ ASSUMPTIONS 29 (no sign-in in the editor) and 30 (no backend; how the real produ
 WebSocket), in a new "Host app and backends" section.
 *My review:* _TODO_
 
+**Prompt 37**
+> I need to write Part A of my assessment: the architecture design document. Read the brief, my
+> notes, the repo docs and the code first. Do NOT write the document yet. First give me: a) a proposed
+> outline (title page, sections 1–9, the A2 parts and the A1 diagram, 3–5 bullets each); b) for each
+> section, what is backed by real code or measurements and what is design-only; c) the places where
+> the brief contradicts itself, each with a proposed assumption; d) a diagram tool and file format that
+> stays editable for the call; e) a target length (about 10–14 pages). Never invent measurements.
+
+*Result:* Claude read the brief, `notes/`, the docs and the code, and replied with the outline, a
+backed/design-only map per section, 14 tensions in the brief with a proposed assumption each, draw.io
+for the diagrams, and a 13-page budget. One new measurement was taken for it: the production build's
+first-load files are about 336 KB gzipped (`npm run build`, then gzip -9 of the files `index.html`
+loads). Nothing written into the document yet.
+*My review:* _TODO_
+
+**Prompt 38**
+> "Design tokens are CSS variables, so the host can re-theme the 3D app at runtime": we have not
+> implemented this feature.
+
+*Result:* Correct. Claude checked `src/index.css` and `src/scene/`: Part B has 6 colour variables for the
+panels (`--bg`, `--panel`, `--border`, `--text`, `--muted`, `--accent`; the other 4 variables are panel
+widths), the 3D colours are hard-coded in the scene files, and nothing reads a theme from a host. The
+earlier answer had wrongly marked this as partly backed. In Part A it will be labelled design only, with
+the honest Part B state, and no claim that re-theming works.
+*My review:* _TODO_
+
+**Prompt 39**
+> Keep in mind that we are not working on extras, just the core part of the application, so go
+> through the codebase thoroughly again and then go through the same prompt again so you don't
+> hallucinate again.
+
+*Result:* Claude re-read every source file in `src/` and `scripts/`, the config and the measurement
+folder, then redid the Part A plan (outline, evidence map, tensions in the brief, diagram tool, length)
+with each claim checked against the code. Corrections to the first answer: the 3D view does not
+recolour items for a proposed fix (only the chat card shows the before → after count); accepting a
+proposal does not re-check it (it relies on `fix.ts` and the stale check); the render loop runs every
+frame (not on demand); culling is per item type, not per item; the 3D canvas has no accessible name;
+all 138 tests are logic and store tests (no component or browser tests, no CI); the Playwright
+measurement scripts live in the gitignored `.cache/measure/`, and the script behind the README's
+500-item FPS numbers is no longer kept. Also found two stale doc lines (DECISIONS "Assistant
+proposals" still mentions the removed screen-reader announcement; ARCHITECTURE says `domain` imports
+nothing app-specific, but `types.ts` imports the `MessageKey` type).
+*My review:* _TODO_
+
+**Prompt 40**
+> Outline approved, with changes: add a half-page appendix "If the constraints change" (a much
+> larger scene; a host that forbids iframes), all marked as design; make CJK line breaking explicit
+> in section 4 (`lang` drives the browser's rules, `line-break: strict`, never `word-break:
+> break-all`); aim for 12 pages. Fix doc mistakes 1 and 2; for the second, fix the code: make
+> `nameKey` the template literal type `` `item.${ItemTypeId}` `` and remove the i18n import, then run
+> typecheck and tests. Don't re-measure FPS; add one README sentence that the Playwright script was a
+> one-off. Keep the "Part B proves / design only" box and the M4 sentence. (I'll give Prompt 2, the
+> writing of sections 1–3, separately.)
+
+*Result:* `src/domain/types.ts` no longer imports from `i18n`, so `domain` now imports nothing
+app-specific, as ARCHITECTURE says. A missing translation is still caught: `t(type.nameKey)` fails the
+typecheck if `en.ts` lacks the key. DECISIONS "Assistant proposals" row no longer mentions the removed
+announcement. README method paragraph says the script was a one-off and how to repeat the by-eye
+check. Typecheck, 138 tests and lint pass. The approved outline, with the appendix, the CJK bullet, a
+12-page budget, the evidence map and the 14 assumptions, is saved in `notes/part-a/OUTLINE.md`
+(private). Nothing written in the document yet.
+*My review:* _TODO_
+
+**Prompt 41**
+> Prompt 2: write the sections. Write the document one section at a time and stop after sections 1–3
+> so I can review; continue when I say "next". For every section: what I'd do, why, and what I
+> rejected. Where Part B already does it, point to the file and function; where it doesn't, say
+> "design only". Target numbers go in tables, labelled as targets. Each section short enough to
+> present in about 2 minutes. (Also specific asks for sections 4, 5, 7 and 9, for later.)
+
+*Result:* The title page (with the "Part B proves / design only" box and the M4 note), a placeholder
+for the diagram, and sections 1–3, written in the private notes folder (not in the repo). Every
+Part B pointer was checked against the code; targets sit in tables marked "Target". Section 3 was
+tightened from about 530 to 450 words, as agreed. Stopped there for review.
+*My review:* _TODO_
+
 ---
 
 _Template for each entry:_
