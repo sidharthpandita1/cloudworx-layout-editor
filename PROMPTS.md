@@ -27,7 +27,7 @@ lightly cleaned for typos only.
 *Result:* Vite + React + TS project with R3F, drei, Zustand, Vitest; a layered folder structure; the
 floor grid; typed EN/VI dictionaries; docs (`PLAN`, `ARCHITECTURE`, `DECISIONS`, `ASSUMPTIONS`,
 `OPTIMISATION`), this log and `CLAUDE.md`.
-*My review:* _TODO: note what you checked or changed._
+*My review:* Kept the setup as it was, and used the docs from here on to record decisions and assumptions as they came up.
 
 ---
 
@@ -81,7 +81,7 @@ undo step. 43 tests pass.
 *What the tests caught:* the existing history-limit test moved an item to x = 1…204; with clamping, every
 move past x = 9 landed in the same spot and was skipped. The test was changed to alternate between two
 positions inside the floor. Good sign that the clamp works and that no-op moves create no history.
-*My review:* _TODO_
+*My review:* The three choices were mine: rotate about a fixed pivot, clamp at the walls, and snap inside the store. The changed test is right: with clamping, a move past the wall lands in the same spot, and a move that changes nothing shouldn't add history. Before moving on, I asked for a full summary to match against the code (prompt 8).
 
 ---
 
@@ -111,9 +111,9 @@ two snapped cabinets, Esc, selecting by click, camera drag not deselecting, empt
 deselecting, no console errors.
 *Found while verifying:* clicking the background outside the floor does not deselect (matches the
 design, raised as an open question).
-*My review:* _TODO_
+*My review:* Tried it myself and thought deselecting was broken (prompt 11). It was working; I had been clicking the light background around the floor, which gave me the idea for prompt 12.
 
-**Promp 11**
+**Prompt 11**
 > Right now even when I click empty floor the selection is not clearing.
 
 *Result:* The AI did not guess at a fix. It re-tested in Chromium with a Retina-size screen, shaky clicks
@@ -126,7 +126,7 @@ page after hot reloads, a palette tool still armed, clicking the background inst
 
 *Result:* Used R3F's built-in `onPointerMissed` on the `Canvas` (it already ignores clicks that moved
 more than 2 px, so camera drags are safe): about 5 lines in `EditorCanvas.tsx`. Verified in Chromium.
-*My review:* _TODO_
+*My review:* Small change, kept as is. Tested it together with the rest of this phase before moving on (prompt 14).
 
 ---
 
@@ -155,7 +155,7 @@ step, camera unchanged; Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y, R, Delete, Backspace and a
 mid-drag puts the item back and releasing afterwards records nothing; disabled buttons when nothing
 is selected. (A first test run failed because the test pressed beside a rotated cabinet and orbited
 the camera; the test was reordered, not the code.)
-*My review:* _TODO_
+*My review:* The behaviour was my call: the item itself moves (no ghost), the toolbar stays in the header, and pressing an unselected item selects and drags it in one motion. Accepted the lint fix for the camera controls.
 
 ---
 
@@ -174,7 +174,7 @@ tightened: a 180° turn keeps the same footprint, so it no longer shifts at all 
 moves the item (one undo step); z = 1 snaps to 1.25; "abc" and Esc revert; Delete inside the field
 edits text, not the layout; x = 99 clamps to the wall; 270° from the dropdown is one undo; Vietnamese
 shows `0,25` and "Tủ điện 1"; selecting item 61 of 62 scrolls its row into view; no console errors.
-*My review:* _TODO_
+*My review:* My answers set the main choices: read-only names, a rotation dropdown, and x/z fields that accept both `3.5` and `3,5`, since Vietnamese uses a decimal comma. Accepted the 180° change: a half turn keeps the same footprint, so the item shouldn't shift.
 
 ---
 
@@ -197,7 +197,7 @@ Drive 1 overlap."; Esc clears it; x = 1,25 in the panel gives "… are 0.5 m apa
 clicking a message selects the item; three items give three messages; Vietnamese messages; undo
 clears everything; no console errors. One fix after a screenshot: long Vietnamese names with the ⚠
 badge pushed the position text onto two lines, so the position no longer wraps.
-*My review:* _TODO_
+*My review:* The four answers were mine: true diagonal distance, live while dragging, the whole item turns red, and measure before optimising (it was fast enough, so no spatial grid). Trying it, I noticed items could still be placed on top of each other, which became prompt 18.
 
 ---
 
@@ -220,7 +220,7 @@ one move; R with a drive in front shows "Can't rotate: Drive 1 is in the way."; 
 in properties reverts the field and shows the warning; Vietnamese toast; no console errors.
 (One test step was wrong at first: x = 0 snaps a drive to 0.25, where it already was, so nothing was
 tried. The test was changed to an overlapping z.)
-*My review:* _TODO_
+*My review:* My answers decided the behaviour: block every kind of edit, and while dragging, stop at the last free cell instead of jumping back to the start. The corrected test is fine: x = 0 snapped to where the drive already was, so the old step tested nothing.
 
 ---
 
@@ -237,7 +237,7 @@ before rotation, no part numbers or prices (the brief gives none). 101 tests pas
 *Verified in Chromium:* empty message; placing a drive adds a row; 3 cabinets + 2 drives + 1
 transformer gives 3 / 2 / 1, total 6; Delete gives 5 and Undo gives 6 again; Vietnamese headers and
 decimal commas (0,5 × 0,5 × 1,2); no console errors.
-*My review:* _TODO_
+*My review:* Went through the four choices it made without asking and kept them: only types in use, catalog order, size before rotation, and no part numbers or prices, because the brief gives none.
 
 ---
 
@@ -259,7 +259,7 @@ main thread 1.1–2.6 ms per frame; 470–900 FPS with vsync off. Rule ~1.4 ms.
 first warning toast took 250 ms, but five repeats and three variants (no animation, no `role=alert`)
 showed nothing. Recorded as a rare one-off, plus a 2.4 s pause seen only in the vsync-off scripted run.
 Also moved the `?stats` meters, which covered the header title.
-*My review:* _TODO_
+*My review:* The answers were mine: URL options only, the seeded layout is not undoable, and Claude scripts the measurement while I check it by eye. My check with `?seed=500&stats` matched: 60 FPS and 5 draw calls.
 
 ---
 
@@ -282,7 +282,7 @@ the copy in `public/` was removed.
 *Measured:* 48.39 → 3.42 MB, 94,722 → 53,013 triangles, 285 → 8.7 MB GPU texture memory,
 39.1 → 3.55 s at 10 Mbps; 500 copies 5,264 → 11 draw calls and 78–113 → under 2 ms CPU per frame,
 but still 9–13 FPS because the GPU draws 50–90 million triangles.
-*My review:* _TODO_
+*My review:* My answers: a Khronos sample model, the benchmark on its own page (not in the editor), and KTX2 with a WebP fallback. The numbers looked good, but I questioned the compression choice next: I asked which library it used, then pushed for Draco because I had used it before (prompts 22 and 23).
 
 **Prompt 22**
 > Which compression library did you use?
@@ -309,7 +309,7 @@ measured each in Chrome: Draco 2% smaller files but its 204 KB decoder makes it 
 *Result:* Removed the Draco versions, decoder and option; kept the Meshopt 1024 px (main) and 512 px
 files; wrote `docs/OPTIMISATION.md` with the full results, the Meshopt-vs-Draco table and next steps;
 README section and credits; decisions, assumptions, architecture, plan.
-*My review:* _TODO_
+*My review:* My decision after seeing both measured: Meshopt only. Draco files were 2% smaller, but its decoder made loading slower, so it didn't actually win. Kept the comparison table in `docs/OPTIMISATION.md` for reference.
 
 ---
 
@@ -332,7 +332,7 @@ to x 0.5, z -0.75."); at the wall "Cabinet 1 is at the wall." and nothing record
 announced; Vietnamese announcement after switching; arrows inside the X field only move the cursor;
 clicking the 3D view focuses it; no console errors. (One test used `window`, which doesn't exist in
 the Node test runner; the test was fixed, not the code.)
-*My review:* _TODO_
+*My review:* My answers set the rules: arrows work everywhere except text fields and the list, fixed floor axes, and one undo per press. Using it, I felt people wouldn't know the shortcuts exist, so I asked for a shortcuts popup (prompt 27). The plus item was removed later (prompt 35), but Part A section 4 points to this commit as the prototype for the 3D keyboard path.
 
 ---
 
@@ -350,7 +350,7 @@ Built `ShortcutsDialog` + `ShortcutsButton`, store `shortcutsOpen`, `?` in `shor
 the backdrop and "Got it" all open/close it and focus returns to the button; → and Delete do nothing
 while it is open and Esc closes only the dialog (selection kept); Vietnamese title; stays closed in a
 fresh browser with `?seed=20&stats`; no console errors.
-*My review:* _TODO_
+*My review:* Opening on the first visit only, and a modal dialog, were my answers. It worked, but opening and closing felt abrupt, so I asked for an animation (prompt 28).
 
 **Prompt 28**
 > One more thing: there is no easing animation when the popup opens and closes. Apply some kind of
@@ -364,7 +364,7 @@ behaviour. Turned off for "reduce motion"; older browsers just open/close instan
 *Verified in Chrome:* opacity sampled every frame: opening 0 → 0.24 → 0.63 → 0.91 → 1 over ~250 ms;
 closing 1 → 0.98 → 0.74 → 0.34 → hidden at ~190 ms, the backdrop fading in step; same for Esc, `?`
 and "Got it"; focus still returns afterwards; no console errors.
-*My review:* _TODO_
+*My review:* The animation was fine. Looking at the dialog again, the real problem was the type and spacing (prompt 29).
 
 **Prompt 29**
 > (With a screenshot of the dialog.) It looks too jarring. As a UX engineer I prefer proper spacing
@@ -382,7 +382,7 @@ ring flashing on ✕); "0.5 m" no longer breaks across lines.
 *Verified in Chrome:* screenshots at 1280×900, 1280×700 and 390 px wide, in EN and VI; footer always
 visible; Tab order title → ✕ → list → "Got it", and focus stays in the dialog; no console errors.
 124 tests pass, typecheck, lint and build clean.
-*My review:* _TODO_
+*My review:* Approved and pushed (prompt 30). Headings and rows are now easy to tell apart, and showing only this platform's keys made the list shorter.
 
 **Prompt 30**
 > Push it and let's move to the assistant preview.
@@ -400,7 +400,7 @@ took 23 s on the packed 500-item layout (most items there have nowhere to go, an
 problems, Accept applies it and one Cmd+Z puts it back; "Fix all" proposes 10 moves (37 → 14) with
 blue ghosts and dashed arrows; deleting an item marks the proposal out of date and removes Accept;
 typed "tóm tắt" gives the Vietnamese summary; no console errors.
-*My review:* _TODO_
+*My review:* My answers shaped it: fix one or fix all, chips plus free text, and a ghost with an arrow. The first "fix all" took 23 s on the packed layout; remembering items with no spot and capping the tries brought it to about 0.1 s. The drawer was my choice too, but in the browser it took too much room, so I changed it to a bubble (prompt 31).
 
 **Prompt 31**
 > Now we have to change some parts of the UI, as it looks very cluttered right now. (Screenshot of the
@@ -417,7 +417,7 @@ screen-reader text) says a suggestion is waiting. The "demo" note moved into the
 *Verified in Chrome:* the 3D view is 880 px wide with the chat open or closed (it narrowed before);
 the input gets focus on open; Esc closes it and focuses the bubble; the dot shows while a proposal
 waits and goes after Accept (37 → 14 problems); no console errors.
-*My review:* _TODO_
+*My review:* Much cleaner: the 3D view keeps its full width whether the chat is open or closed. With that done, I wanted the side panels to close too (prompt 32).
 
 **Prompt 32**
 > One more thing: the panel should have a button so that the user can close and open it as needed.
@@ -430,7 +430,7 @@ that keeps only the button; the grid columns animate (ease-out 0.22 s, off for r
 *Verified in Chrome (1440 px wide):* 3D view 880 px → 1,100 px (left closed) → 1,360 px (both closed),
 and the canvas re-renders at the new size; Enter on the focused button works and focus stays on it;
 the closed state survives a reload; Vietnamese labels; no console errors.
-*My review:* _TODO_
+*My review:* Both panels was my answer, and I kept the result. After this I decided to stop adding extras (prompt 33).
 
 **Prompt 33**
 > We are stopping on extras right now, so two things I am thinking of removing: keyboard shortcuts and
@@ -443,7 +443,7 @@ and supports Part A section 4) and asked what to remove; my choice: the announce
 and the `announce.*` strings. `nudgeItem` now just calls `moveItem` (which already stops at the wall).
 Kept: labels, the listbox pattern, the warning toast, the clearance count, the assistant log.
 Docs updated (README, DECISIONS, ASSUMPTIONS 24, ARCHITECTURE, PLAN). 146 tests pass.
-*My review:* _TODO_
+*My review:* Claude advised keeping both, and I chose to remove only the announcements. Then I looked at the brief again and thought keyboard editing was needed (prompt 34), so this removal was undone.
 
 **Prompt 34**
 > (Screenshot of the brief's Part B list.) As you can see in the image, the keyboard shortcuts are in
@@ -453,7 +453,7 @@ Docs updated (README, DECISIONS, ASSUMPTIONS 24, ARCHITECTURE, PLAN). 146 tests 
 keyboard, with screen-reader announcements", so both stay. The removal from prompt 33 was not
 committed, so it was undone by restoring the files from the last commit (`git restore`): the
 announcer, its strings and tests, and the docs are back as they were. 152 tests pass.
-*My review:* _TODO_
+*My review:* Reading the brief more carefully, keyboard editing is in the "pick any" list, so it is optional. I changed course in the next prompt.
 
 **Prompt 35**
 > No, no, read the document properly: it says "pick any". We already have the assistant, so we can
@@ -469,7 +469,7 @@ strings, styles and tests, mostly by restoring the files from before the keyboar
 (README, DECISIONS, ASSUMPTIONS 21, ARCHITECTURE, PLAN). 138 tests pass.
 *Verified in Chrome:* no dialog on the first visit and no Shortcuts button; → does nothing; R rotates
 and ⌘Z undoes it; Esc deselects; Delete removes; `?` does nothing; no console errors.
-*My review:* _TODO_
+*My review:* My call. The plus items are optional, and model optimisation and the assistant preview were already done, so I preferred a smaller, finished submission. The core shortcuts stay: undo, redo, rotate, delete and Esc.
 
 **Prompt 36**
 > In ASSUMPTIONS.md we have to add that I am assuming the sign-in is in the editor because the host
@@ -481,7 +481,7 @@ separate services, not part of the host; the host only passes the token, and the
 the WebSocket itself. This prototype has no backend at all (layout in memory, mock assistant). Added
 ASSUMPTIONS 29 (no sign-in in the editor) and 30 (no backend; how the real product would use REST and
 WebSocket), in a new "Host app and backends" section.
-*My review:* _TODO_
+*My review:* I had mixed up the host and the backends. The host owns sign-in and only passes the token; the backends are separate services that the editor calls itself. Accepted assumptions 29 and 30 as corrected.
 
 **Prompt 37**
 > I need to write Part A of my assessment: the architecture design document. Read the brief, my
@@ -496,7 +496,7 @@ backed/design-only map per section, 14 tensions in the brief with a proposed ass
 for the diagrams, and a 13-page budget. One new measurement was taken for it: the production build's
 first-load files are about 336 KB gzipped (`npm run build`, then gzip -9 of the files `index.html`
 loads). Nothing written into the document yet.
-*My review:* _TODO_
+*My review:* Going through the evidence map, I found a claim that was wrong: host re-theming was marked as partly built, and it is not (prompt 38).
 
 **Prompt 38**
 > "Design tokens are CSS variables, so the host can re-theme the 3D app at runtime": we have not
@@ -507,7 +507,7 @@ panels (`--bg`, `--panel`, `--border`, `--text`, `--muted`, `--accent`; the othe
 widths), the 3D colours are hard-coded in the scene files, and nothing reads a theme from a host. The
 earlier answer had wrongly marked this as partly backed. In Part A it will be labelled design only, with
 the honest Part B state, and no claim that re-theming works.
-*My review:* _TODO_
+*My review:* After this I asked Claude to re-read the whole codebase and redo the plan, so nothing else was made up (prompt 39).
 
 **Prompt 39**
 > Keep in mind that we are not working on extras, just the core part of the application, so go
@@ -525,7 +525,7 @@ measurement scripts live in the gitignored `.cache/measure/`, and the script beh
 500-item FPS numbers is no longer kept. Also found two stale doc lines (DECISIONS "Assistant
 proposals" still mentions the removed screen-reader announcement; ARCHITECTURE says `domain` imports
 nothing app-specific, but `types.ts` imports the `MessageKey` type).
-*My review:* _TODO_
+*My review:* The re-read fixed real mistakes in the first plan, for example that accepting a proposal doesn't re-check it, and that there are no component tests. I approved the outline with my changes in prompt 40.
 
 **Prompt 40**
 > Outline approved, with changes: add a half-page appendix "If the constraints change" (a much
@@ -544,7 +544,7 @@ announcement. README method paragraph says the script was a one-off and how to r
 check. Typecheck, 138 tests and lint pass. The approved outline, with the appendix, the CJK bullet, a
 12-page budget, the evidence map and the 14 assumptions, is saved in `notes/part-a/OUTLINE.md`
 (private). Nothing written in the document yet.
-*My review:* _TODO_
+*My review:* The domain fix keeps the layer rule true, and a missing translation still fails the typecheck. Approved. Next I asked for sections 1 to 3 (prompt 41).
 
 **Prompt 41**
 > Prompt 2: write the sections. Write the document one section at a time and stop after sections 1–3
@@ -557,7 +557,196 @@ check. Typecheck, 138 tests and lint pass. The approved outline, with the append
 for the diagram, and sections 1–3, written in the private notes folder (not in the repo). Every
 Part B pointer was checked against the code; targets sit in tables marked "Target". Section 3 was
 tightened from about 530 to 450 words, as agreed. Stopped there for review.
-*My review:* _TODO_
+*My review:* Approved with three changes to section 2 (prompt 42): drop the unsent queue and reload when a save is refused, the URL row for the first app only, and a WebSocket heartbeat.
+
+**Prompt 42**
+> Sections 1–3 approved with three changes to section 2: on any refused save, drop the unsent queue,
+> reload the layout and tell the user which edits were lost (and reject "re-apply the queue one by
+> one"); the URL row is for the first app only, since the 3D app has no router and gets its context
+> from the host; add a WebSocket heartbeat (ping every 30 s, reconnect after two missed pings). Keep
+> the notes folder. Commit the four repo files, then write section 4 and stop.
+
+*Result:* Section 2 changed as asked. Committed `README.md`, `docs/DECISIONS.md`, `PROMPTS.md` and
+`src/domain/types.ts` as "Fix domain layer import; correct docs and README measurement note" (not
+pushed). Section 4 written: three languages from one build, locale formats with real `Intl` output
+checked in Node, CJK line breaking, WCAG 2.2 AA, and the 3D view's keyboard and screen-reader path,
+with the removed keyboard editing (`a751f17`) named as its prototype. Cut from about 960 to 730 words.
+*My review:* Approved with two changes (prompt 43): keyboard paths for the first app, and say exactly what commit `a751f17` built.
+
+**Prompt 43**
+> Section 4 approved with two changes and a trim to section 2: add three lines on keyboard paths in
+> the first app (list, grid, multi-step form); state exactly what commit `a751f17` built; cut one
+> sentence and merge the heartbeat sentences in section 2 (about 750 words). Word caps from here
+> (sections 5 and 7 at most 600 words, 6, 8 and 9 at most 450). Write section 5 (postMessage table,
+> token refresh, origin checks, CSP, cookies, host theme) and stop. Then: "open the pdf after
+> finishing".
+
+*Result:* Changes made; section 2 is about 760 words. Correction to the prompt: `a751f17` did build
+the Shift move (`moveFor` and `BIG_MOVE = 2` in `src/ui/shortcuts.ts` at that commit), so the text says
+it built the listbox, arrow-key moves (one cell, Shift 2 m, one undo step per press) and the live
+region. Section 5 written, about 550 words. Built a PDF from the notes with Chrome (a small script in
+the job's temp folder; `marked` for Markdown) and opened it: 10 A4 pages for the title, diagram
+placeholder and sections 1–5. First render had the title lines run together and big gaps before
+long tables; both fixed.
+*My review:* Claude corrected me on `a751f17`: it did build the Shift move, and I kept the corrected text. Section 5 approved. I set the PDF layout rules next (prompt 44).
+
+**Prompt 44**
+> You were right about `a751f17` and the Shift move; keep the corrected text. Section 5 approved. Keep
+> the build script in the notes folder. PDF layout: don't shrink the font or margins; no forced page
+> break per section, headings never alone at the bottom of a page; tables of 12 rows or fewer never
+> split, longer ones repeat their header; title page as is, diagram from page 2. Rebuild and give the
+> page count. Then write section 6 (at most 450 words), marking built vs design, and stop.
+
+*Result:* The build script now lives next to the document with its own `package.json` (`marked`),
+uses paths relative to itself, and prints the page count. Layout rules applied; the section 2 target
+table no longer splits. Title, diagram placeholder and sections 1–5: still 10 pages, because the
+9-row message table in section 5 must move whole to the next page. Section 6 written at 449 words,
+with a measured-vs-target table (5 draw calls, ~1.4 ms rule check, 1.8–2.6 ms main thread while
+dragging, all at 500 items on the M4) and the 2,000-item all-pairs cost labelled as an estimate. With
+section 6: 11 pages.
+*My review:* Section 6 approved. The page count kept growing, so I asked to trim sections 2 and 4 by cutting "Why" bullets that repeat a reason (prompt 45).
+
+**Prompt 45**
+> Section 6 approved. 14–15 pages is acceptable. Trim sections 2 and 4 to about 650 words each by
+> removing "Why" bullets that repeat a reason already given, keeping every table and "In Part B"
+> line; keep only tables of 8 rows or fewer unsplit. Then write section 7 (at most 600 words): the
+> pipeline steps (what Part B runs, what the product adds), Meshopt over Draco with the measured
+> reason, a per-model and a per-scene target table with measured values beside each target,
+> runtime loading and culling, and the honest line about the 500-copy benchmark. Then stop.
+
+*Result:* Removing the repeated "Why" bullets alone left sections 2 and 4 near 700 words, so a few
+sentences were also tightened (the WebSocket paragraph, the retry bullets, the opening of section 4,
+the `a751f17` sentence); both are now about 675 words, with every table and "In Part B" line kept.
+Table rule changed to 8 rows. Section 7 written at about 550 words, every number taken from
+`docs/OPTIMISATION.md` or the README, targets in a "Target" column, total memory marked "not
+measured". PDF: 12 pages through section 7.
+*My review:* Approved. I added a short "Do the budgets add up?" check after the per-scene table (prompt 46), so the targets are shown to fit together.
+
+**Prompt 46**
+> Section 7 approved with one addition after the per-scene table, "Do the budgets add up?" (three
+> sentences, labelled estimate: textures allow about 32 models at full texture detail; two materials
+> × three levels allows about 50 visible models under the draw-call cap; the triangle budget means
+> most items at the low level). 15–16 pages accepted, no more trimming. Then write section 8 (at most
+> 450 words): the built contract and proposal flow, what production adds (streamed HTTPS with the
+> host's token, schema plus store-rule checks before preview, layout version, server re-check, no
+> free text), and the honest line that `accept()` doesn't re-check today. Then stop.
+
+*Result:* Addition placed after the per-scene table; its arithmetic checks out (8 MB × 32 = 256 MB;
+300 / 6 = 50; 2 million / 2,000 = 1,000, and 400 triangles is the 2% low level of a 20,000-triangle
+model). Section 7 is now about 655 words because of it. Section 8 written at about 405 words; every
+built claim checked against `src/assistant/*` and `ProposalPreview.tsx`. One detail added: the
+stream is read with `fetch`, because `EventSource` can't send an `Authorization` header.
+*My review:* Section 8 approved as written. Good catch on reading the stream with `fetch`, since `EventSource` can't send the token.
+
+**Prompt 47**
+> Section 8 approved. Write section 9 (at most 450 words): a budget table (one row per budget in the
+> brief, how it is met, the Part B number and whether it is measured, a target or not measured); how
+> it is measured in CI, honestly (no CI today; the plan; frame rate on a reference laptop, not in CI);
+> error reporting (Sentry, an error boundary around the 3D view, WebGL context loss rebuilt from the
+> store, metrics), noting Part B has none; the testing layers, built or design. Then stop.
+
+*Result:* Section 9 written at 450 words. Every Part B number is marked measured, estimate or not
+measured (memory and integrated graphics are "not measured"). Added a small CI target table (first
+load ≤ 400 KB gzipped; no rise in draw calls or triangles over the recorded baseline) and a
+testing-layers table. "In Part B" says plainly: no CI, no component or browser tests, no error
+reporting, and the FPS script was a one-off.
+*My review:* Approved with one addition: the vsync-off headroom from the README in the 50 fps row (prompt 48).
+
+**Prompt 48**
+> Section 9 approved; add the README's vsync-off figure to the 50 fps row. Fix the orphan line with
+> CSS (orphans and widows 2), not by editing text. Then write A2-1 (a choices table, at most 14 rows:
+> Choice / Why / Rejected, design-only rows marked), A2-3 (at most 10 rejected trade-offs that change
+> the shape of the design) and the appendix "If the constraints change" (a much larger scene; no
+> iframes; at most 450 words, all design). Leave the sequence and the assumptions for the next prompt.
+
+*Result:* Done, with A2-2 and A2-4 left as one-line placeholders so the order shows. The orphan line
+is gone. A2-1 has 14 rows condensed from `docs/DECISIONS.md` plus the design-only rows; A2-3 has 9
+items; the appendix is about 270 words. Correction to the prompt: 10,000 items are about 400× the
+pairs of 500, so the all-pairs check goes from 1.4 ms to about 0.56 s on the M4 (estimate), not
+"seconds"; the text says 0.56 s, and more on a slower laptop. The appendix also notes that Part B's
+instance capacity (2,000 per type) would have to grow. PDF: 16 pages.
+*My review:* Approved. Claude corrected my "seconds" for 10,000 items: about 0.56 s on the M4 (estimate), and more on a slower laptop.
+
+**Prompt 49**
+> A2-1, A2-3 and the appendix approved. Now write A2-2 (nine numbered steps, each built or design,
+> with real names and real message texts, then a Mermaid sequence diagram with eight lanes) and A2-4
+> (at most 20 one-line assumptions, grouped: scenario, editor, host and backend). Then stop.
+
+*Result:* Both written. Two corrections to the prompt: (1) Part B's grid is 0.5 m and footprints are
+whole cells, so a gap under 0.6 m is always 0 m or 0.5 m; the quoted message says "0.5 m apart", not
+0.4 m, and the text explains why. (2) The undo in step 9 reverts the assistant's move, which may move
+either item, so it says "the moved item goes back". The listed assumptions came to 25, so to stay
+within 20 lines two pairs of scenario assumptions share a line and "one engineer per layout" appears
+once: 19 lines. The PDF build now renders Mermaid (from a CDN at build time) and puts the diagram on a
+landscape page of its own so its text is readable; labels in the diagram were shortened for the same
+reason. PDF: 18 pages.
+*My review:* Approved; I only asked to reword assumption 4 so it matches the texture numbers in section 7 (prompt 50). Both corrections were right: on this grid a gap under 0.6 m is 0 or 0.5 m, and undo moves back whichever item the assistant moved.
+
+**Prompt 50**
+> A2-2 and A2-4 approved; reword assumption 4 to agree with the texture arithmetic in section 7. Then
+> the A1 architecture diagram, in two files: a Mermaid flowchart rendered into the PDF on its own
+> landscape page, and the same diagram as draw.io XML with explicit coordinates for live editing.
+> Boxes grouped, the iframe as a container, a protocol on every arrow, solid for what Part B builds and
+> dashed for design, a legend, at most 20 boxes. Rebuild, report the page count and whether the
+> diagram text is readable at print size, and say which draw.io boxes I'll likely move.
+
+*Result:* Assumption 4 reworded. `architecture.mmd` (19 boxes including the legend, 19 arrows, each
+labelled) replaces the placeholder on a landscape page. Readability took several tries, measured in
+the browser rather than judged by eye: the first render printed labels at about 4.6 pt because a
+caption style in the build also shrank the diagram's labels; after removing it and comparing 16
+layout settings, the default layout left to right with 24 px text and tight spacing prints at about
+8.2 pt. The sequence diagram prints at about 7.1 pt. `architecture.drawio` has the same boxes and
+labels with explicit coordinates, nested containers for the host page and the iframe, and was
+checked as valid XML with no dangling arrows; draw.io isn't installed here, so it was not opened. PDF:
+18 pages.
+*My review:* The arrows to the backends were hard to follow, so I described the layout I wanted (prompt 51).
+
+**Prompt 51**
+> The A1 arrows to the backends aren't followable. Fix the diagram: backends as three separate boxes in
+> a column at the far right; CDN in the bottom row next to the asset pipeline; the modules in the
+> iframe in three fixed rows; one-line arrow labels; the procurement app directly below the iframe
+> with its arrows going right. Check the label size at print size. Then do the final check of the
+> document against the brief (sections 1–9, A1, A2, the evaluation table), list every number not from
+> the repo docs or the brief and not labelled, and every "built" claim with the file that proves it.
+> Report only.
+
+*Result:* Mermaid's automatic layouts (dagre and ELK) build layers, so they can't pin a row of boxes
+side by side while also stacking rows; the fixed grid asked for is not possible there. The diagram
+is now drawn from explicit coordinates by a small script in the notes folder, which writes both the
+SVG for the PDF and the draw.io file, so the two can't drift; the Mermaid file is marked superseded.
+All five layout points are met with no crossing lines; the "load model" arrow from scene to asset
+loader was dropped because it can't be drawn in that grid without crossing (it wasn't in the
+requested list). Printed size: about 8.3 pt for box names, 7.4 pt for arrow labels. PDF: 18 pages.
+Final check reported in the conversation; the document was not edited.
+*My review:* Diagram approved. From the final-check report, I asked for its text fixes plus three more arrows (prompt 52).
+
+**Prompt 52**
+> Diagram approved; delete the Mermaid file. Add three arrows to the diagram (the procurement app's
+> sign-in to the identity provider up the left edge; its assistant stream along the bottom; "called by
+> Scene" under the asset loader, since that arrow can't be drawn without crossing). Apply the text
+> fixes from the final check: Surface 1 screen-reader paths, Surface 1's assistant, plain-words glosses
+> at first use, and exact wording for the assistant contract, the layer rule, `execute`, and how the
+> 336 KB figure was measured. Rebuild and report the page count.
+
+*Result:* Done. The procurement app's three backend arrows run in nested lanes so none cross; the
+new sign-in arrow runs up the left edge outside the shared packages; still no crossing lines. Glosses
+were placed at the first use of each term in the text (KTX2 in the CSP table, UASTC and ETC1S in
+section 7, idempotency key and CRDT in section 2, SSE in section 8). Before relabelling the 336 KB
+figure it was measured again on the current build: 336,105 bytes gzipped. PDF: 19 pages.
+*My review:* Approved. Then I asked to make the three origins (host, 3D app, backends) explicit everywhere (prompt 53).
+
+**Prompt 53**
+> Make one design fact explicit everywhere: the 3D app is deployed at its own URL on its own domain,
+> the host embeds that URL in the iframe, and the procurement app has its own domain, so host, 3D app
+> and backends are three origins. Edits to the title page, section 1, section 5 (origins, CORS,
+> "opened directly"), the appendix, the assumptions and the diagram labels. Rebuild and report.
+
+*Result:* All edits applied; PDF 19 pages. One correction to the appendix wording: without the
+iframe, the app's script runs in the host's page, so API requests carry the host's origin, not the
+app's; the text now says the CORS allowlist must add the host's origin, and that cookies stay out
+because the API is still on another site. The new domain assumption is the first line of the "Host and
+backend" group (now 20 assumptions).
+*My review:* Accepted, including the appendix correction: without the iframe, the app's requests come from the host's page, so CORS has to allow the host's origin.
 
 ---
 

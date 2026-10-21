@@ -3,8 +3,6 @@
 A small 3D layout editor for placing electrical equipment on a floor grid, built with React,
 TypeScript and React Three Fiber.
 
-> Status: in progress. Sections marked _TODO_ are filled in as features land.
-
 ## Run it
 
 Requires Node.js 20 or newer.
@@ -138,7 +136,7 @@ submission focused; see docs/DECISIONS.md.
 
 ## Assumptions
 
-See [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md). _TODO_: copy the final list here.
+See [docs/ASSUMPTIONS.md](docs/ASSUMPTIONS.md).
 
 ## Project structure
 
@@ -147,8 +145,26 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for layers and data flow, and
 
 ## Use of AI tools
 
-_TODO_: which tools, for what, and how the output was checked. The key prompts are in
-[PROMPTS.md](PROMPTS.md).
+I used Claude Code (Claude Opus 5.5, in the terminal) for planning and implementation. After
+implementing, I had a Claude agent review the code, and then I reviewed it myself: I read the code,
+ran the tests, typecheck and lint, and tried the feature in the browser.
+
+- **How I worked:** I described each feature in my own words and asked for a plan before any code.
+  The rules I gave the AI are in [CLAUDE.md](CLAUDE.md), for example: keep the code simple enough that
+  I can explain every line, test the pure logic, and send every string through `translate()`.
+- **My decisions:** building Part B first, so the design document could use real numbers. Meshopt
+  over Draco: I first asked for Draco because I had used it before, then asked for both to be built
+  and measured. Draco files were about 2% smaller, but its 204 KB decoder made loading 0.08 s slower
+  at 10 Mbps, so I chose Meshopt. Removing the optional keyboard editing: Claude advised keeping it,
+  but I wanted a smaller, focused submission.
+- **When it was wrong:** while planning the design document, Claude marked "the host can re-theme the
+  3D view" as partly built. It is not built, so I corrected it and asked it to re-read the whole
+  codebase and redo the plan (prompts 38 and 39).
+- **Design document:** also written with Claude, from an outline and a list of what is built and
+  what is design only. I went through it section by section, and its numbers come from this repo.
+  The few estimates are labelled as estimates.
+
+The key prompts, with what I accepted or changed, are in [PROMPTS.md](PROMPTS.md).
 
 ## Credits
 
