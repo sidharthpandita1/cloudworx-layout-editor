@@ -5,7 +5,7 @@ TypeScript and React Three Fiber.
 
 ## Run it
 
-Requires Node.js 20 or newer.
+Requires Node.js 20.19+ or 22.12+ (Vite 8 needs one of these).
 
 ```bash
 npm install
