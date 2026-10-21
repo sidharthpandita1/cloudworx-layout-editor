@@ -3,6 +3,10 @@
 A small 3D layout editor for placing electrical equipment on a floor grid, built with React,
 TypeScript and React Three Fiber.
 
+- **Live demo:** https://cloudworx-layout-editor.vercel.app
+  (add `?seed=500&stats` to the address for the 500-item test with the FPS and draw-call counters)
+- **Model optimisation benchmark:** https://cloudworx-layout-editor.vercel.app/model-bench.html
+
 ## Run it
 
 Requires Node.js 20.19+ or 22.12+ (Vite 8 needs one of these).
